@@ -67,7 +67,6 @@ public class Game {
         System.out.println("Respostas Corretas: " + answers);
         PlayerSpringlessController player = new PlayerSpringlessController(name, answers);
         player.toString();
-        //p1.setAnswers(answers);
 
     }
 

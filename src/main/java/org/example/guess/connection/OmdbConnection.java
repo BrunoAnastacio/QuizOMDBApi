@@ -102,18 +102,12 @@ public class OmdbConnection {
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .setPrettyPrinting()
                     .create();
-            //System.out.println(json);
             OmdbTitle meuTituloOmdb = gson.fromJson(json, OmdbTitle.class);
             titulo = new Title(meuTituloOmdb);
 
         }catch(JsonSyntaxException exception){
             System.out.println("Erro de JSON");
             System.out.println(json);
-            //OmdbConnection();
-//            fillFakeJson();
-//            addJson();
-//            deserialize();
-//            Game.setStatus("Sem conexão. Utilizando dados locais.");
         }catch(NullPointerException exception){
             System.out.println(exception.getMessage());
         }

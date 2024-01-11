@@ -17,7 +17,6 @@ public class Player {
 
     public Player(String name) {
         this.name = name;
-        //this.stars = 5;
         this.answers = 0;
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
@@ -31,15 +30,6 @@ public class Player {
     public String getName() {
         return name;
     }
-
-//    //public int getStars() {
-//        return stars;
-//    }
-
-//    //public void setStars(int stars) {
-//        this.stars = stars;
-//    }
-
 
     public int getAnswers() {
         return answers;
