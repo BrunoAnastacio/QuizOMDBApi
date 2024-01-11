@@ -1,7 +1,7 @@
 package org.example.guess;
 
-import org.example.guess.models.beans.Player;
-import org.example.guess.models.beans.Question;
+import org.example.guess.models.dao.Player;
+import org.example.guess.models.dao.Question;
 
 import java.io.IOException;
 
