@@ -7,23 +7,23 @@ import java.sql.Statement;
 
 public class ConnectionFactory {
 
-    public Connection recoveryConnection(){
+    public Connection recoveryConnection() {
         try {
             // Cria a conexão com o banco de dados
-                Connection connection = DriverManager.getConnection("jdbc:sqlite:base.db");
-                Statement statement = connection.createStatement();
-                statement.setQueryTimeout(30);
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:base.db");
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);
 
-                //comandos de configuração do BD
-                System.out.println("Conexão com DB aberta por 5 segundos");
-                System.out.println(statement);
-                Thread.sleep(5000);
-                System.out.println("Conexão com DB encerrada");
+//            //comandos de configuração do BD
+//            System.out.println("Conexão com DB aberta por 5 segundos");
+//            System.out.println(statement);
+//            Thread.sleep(5000);
+//            System.out.println("Conexão com DB encerrada");
 
-                return connection;
+            return connection;
 
             //--------------------------------
-        } catch(Exception exception){
+        } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
 //        finally{
@@ -32,7 +32,7 @@ public class ConnectionFactory {
 //            } catch (SQLException exception){
 //                System.err.println("Impossível encerrar conexão. " + exception.getMessage());
 //            }
-        }
+//      }
     }
 }
 

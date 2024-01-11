@@ -1,7 +1,7 @@
 package org.example.guess.view;
 
 import org.example.guess.controllers.springless.PlayerSpringlessController;
-import org.example.guess.models.Question;
+import org.example.guess.models.dao.Question;
 import org.example.guess.tools.GameManager;
 
 import java.io.IOException;

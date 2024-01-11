@@ -1,4 +1,4 @@
-package org.example.guess.models;
+package org.example.guess.models.dao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

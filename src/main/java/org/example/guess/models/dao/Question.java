@@ -1,14 +1,12 @@
-package org.example.guess.models;
+package org.example.guess.models.dao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Question {
 

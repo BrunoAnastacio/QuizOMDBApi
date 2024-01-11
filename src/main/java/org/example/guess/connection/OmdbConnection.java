@@ -6,10 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import org.example.guess.exceptions.ProxyBlockException;
-import org.example.guess.models.OmdbTitle;
-import org.example.guess.models.Title;
+import org.example.guess.models.dao.OmdbTitle;
+import org.example.guess.models.dao.Title;
 import org.example.guess.tools.GameManager;
-import org.example.guess.view.Game;
 
 import java.io.IOException;
 import java.net.URI;

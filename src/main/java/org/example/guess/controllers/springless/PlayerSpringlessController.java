@@ -1,6 +1,6 @@
 package org.example.guess.controllers.springless;
 
-import org.example.guess.models.Player;
+import org.example.guess.models.dao.Player;
 
 public class PlayerSpringlessController {
 

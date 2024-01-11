@@ -1,9 +1,8 @@
 package org.example.guess.controllers;
 
-import org.example.guess.models.Question;
+import org.example.guess.models.dao.Question;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;

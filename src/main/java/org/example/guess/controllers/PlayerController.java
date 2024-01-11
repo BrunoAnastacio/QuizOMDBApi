@@ -1,8 +1,6 @@
 package org.example.guess.controllers;
 
-import org.example.guess.models.Player;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.example.guess.models.dao.Player;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,9 +1,7 @@
-package org.example.guess.models;
+package org.example.guess.models.dao;
 
 import org.example.guess.connection.OmdbConnection;
-import org.example.guess.exceptions.ProxyBlockException;
 import org.example.guess.tools.GameManager;
-import org.example.guess.view.Game;
 
 import java.io.IOException;
 
