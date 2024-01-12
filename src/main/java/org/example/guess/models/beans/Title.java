@@ -103,7 +103,7 @@ public class Title {
 =======
 package org.example.guess.models.beans;
 
-import org.example.guess.connection.OmdbConnection;
+import org.example.guess.connections.OmdbConnection;
 import org.example.guess.tools.GameManager;
 
 import java.io.IOException;
