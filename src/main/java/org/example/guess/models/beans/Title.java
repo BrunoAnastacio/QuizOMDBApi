@@ -1,7 +1,6 @@
-<<<<<<< HEAD:src/main/java/org/example/guess/models/dao/Title.java
-package org.example.guess.models.dao;
+package org.example.guess.models.beans;
 
-import org.example.guess.connection.OmdbConnection;
+import org.example.guess.connections.OmdbConnection;
 import org.example.guess.tools.GameManager;
 
 import java.io.IOException;
@@ -100,6 +99,7 @@ public class Title {
     }
 
 }
+<<<<<<< HEAD
 =======
 package org.example.guess.models.beans;
 
@@ -203,3 +203,5 @@ public class Title {
 
 }
 >>>>>>> 0dfe66d (Organizando Beans e DAOs):src/main/java/org/example/guess/models/beans/Title.java
+=======
+>>>>>>> f077365 (Corrigindo nome de usuario)
