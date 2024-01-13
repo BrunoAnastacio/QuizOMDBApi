@@ -1,3 +1,4 @@
+<<<<<<< HEAD:src/main/java/org/example/guess/models/bean/PlayerBean.java
 <<<<<<< HEAD
 package org.example.guess.models.bean;
 
@@ -26,17 +27,18 @@ public class PlayerBean {
 }
 =======
 package org.example.guess.models.bean;
+=======
+package org.example.guess.models.dao;
+>>>>>>> 0dfe66d (Organizando Beans e DAOs):src/main/java/org/example/guess/models/dao/PlayerDAO.java
 
 import org.example.guess.connection.ConnectionFactory;
-import org.example.guess.models.dao.Player;
+import org.example.guess.models.beans.Player;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-public class PlayerBean {
-    public PlayerBean(String name, int answer) throws SQLException {
+public class PlayerDAO {
+    public PlayerDAO(String name, int answer) throws SQLException {
         Player player = new Player(name, answer);
         String sql = "INSERT INTO player VALUES(1, "+ player.getName()+","+ player.getAnswers()+")";
         //Statement statement = connection.prepareStatement(sql);
