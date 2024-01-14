@@ -1,8 +1,7 @@
 
-package org.example.guess.controllers;
+package org.quizapi.controllers;
 
-import org.example.guess.models.dao.Question;
-
+import org.quizapi.models.beans.Question;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

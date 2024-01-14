@@ -1,6 +1,6 @@
-package org.example.guess.models.daos;
+package org.quizapi.models.daos;
 
-import org.example.guess.models.beans.Player;
+import org.quizapi.models.beans.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,6 +1,5 @@
-package org.example.guess;
+package org.quizapi;
 
-import org.example.guess.controllers.QuestionController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,7 +10,6 @@ public class QuizapiApplication {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		SpringApplication.run(QuizapiApplication.class, args);
-
 
 	}
 

@@ -1,8 +1,7 @@
+package org.quizapi.models.beans;
 
-package org.example.guess.models.beans;
-
-import org.example.guess.connections.OmdbConnection;
-import org.example.guess.tools.GameManager;
+import org.quizapi.connections.OmdbConnection;
+import org.quizapi.tools.GameManager;
 
 import java.io.IOException;
 
@@ -52,6 +51,7 @@ public class Title {
         }
 
         GameManager.addInCacheTitle(this.imdbID);
+        System.out.println("Titulo criado");
 
     }
 

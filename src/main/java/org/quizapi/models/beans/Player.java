@@ -1,5 +1,5 @@
 
-package org.example.guess.models.beans;
+package org.quizapi.models.beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

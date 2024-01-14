@@ -1,4 +1,4 @@
-package org.example.guess.exceptions;
+package org.quizapi.exceptions;
 
 public class ProxyBlockException extends Exception{
     public ProxyBlockException() {

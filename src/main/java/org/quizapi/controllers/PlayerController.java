@@ -1,6 +1,6 @@
-package org.example.guess.controllers;
+package org.quizapi.controllers;
 
-import org.example.guess.models.dao.Player;
+import org.quizapi.models.beans.Player;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

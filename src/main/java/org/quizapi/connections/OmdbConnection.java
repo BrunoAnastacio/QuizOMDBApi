@@ -1,14 +1,14 @@
-package org.example.guess.connections;
+package org.quizapi.connections;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import org.example.guess.exceptions.ProxyBlockException;
-import org.example.guess.models.beans.OmdbTitle;
-import org.example.guess.models.beans.Title;
-import org.example.guess.tools.GameManager;
+import org.quizapi.exceptions.ProxyBlockException;
+import org.quizapi.models.beans.OmdbTitle;
+import org.quizapi.models.beans.Title;
+import org.quizapi.tools.GameManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -124,6 +124,7 @@ public class OmdbConnection {
             internalDataCall();
         } finally{
             deserialize();
+            System.out.println(json + url);
         }
     }
 

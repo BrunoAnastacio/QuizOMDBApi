@@ -1,6 +1,6 @@
-package org.example.guess.controllers.springless;
+package org.quizapi.controllers.springless;
 
-import org.example.guess.models.dao.Player;
+import org.quizapi.models.beans.Player;
 
 public class PlayerSpringlessController {
 

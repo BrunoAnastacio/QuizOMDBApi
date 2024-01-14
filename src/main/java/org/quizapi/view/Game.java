@@ -1,8 +1,8 @@
-package org.example.guess.view;
+package org.quizapi.view;
 
-import org.example.guess.controllers.springless.PlayerSpringlessController;
-import org.example.guess.models.beans.Question;
-import org.example.guess.tools.GameManager;
+import org.quizapi.controllers.springless.PlayerSpringlessController;
+import org.quizapi.models.beans.Question;
+import org.quizapi.tools.GameManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ public class Game {
             int r;
             List<Object> opcoes = new ArrayList<>();
             Question q = new Question();
+            //System.out.println("qcd");
             System.out.println(q.toJson());
             System.out.println(GameManager.getStatus());
             System.out.println(GameManager.getCountRequests() - 5 + " tentativas excedentes de requisições realizadas.");

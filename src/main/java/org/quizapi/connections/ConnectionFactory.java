@@ -1,4 +1,4 @@
-package org.example.guess.connections;
+package org.quizapi.connections;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

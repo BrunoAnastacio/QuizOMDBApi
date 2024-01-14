@@ -1,4 +1,4 @@
-package org.example.guess.exceptions;
+package org.quizapi.exceptions;
 
 public class InvalidFieldNameException extends Exception{
     public InvalidFieldNameException() {

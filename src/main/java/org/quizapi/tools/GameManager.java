@@ -1,4 +1,4 @@
-package org.example.guess.tools;
+package org.quizapi.tools;
 
 import java.util.ArrayList;
 import java.util.List;
