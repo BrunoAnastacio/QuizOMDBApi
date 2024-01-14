@@ -2,6 +2,7 @@ package org.quizapi.connections;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.quizapi.tools.DBManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,5 +26,8 @@ public class ConnectionFactory {
 
         return new HikariDataSource(config);
     }
+//    DBManager manager = new DBManager("foo","goo");
+//    manager.createNewTable( "foo");
+
 }
 
