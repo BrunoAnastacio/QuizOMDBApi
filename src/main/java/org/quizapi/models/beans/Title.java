@@ -21,6 +21,13 @@ public class Title {
             this.error = "Error getting data";
     }
 
+
+
+//    public void foo(){
+//        GameManager.addInCacheTitle(this.imdbID);
+//        GameManager.containsInCache(this.imdbID);
+//    }
+
     public Title(boolean plotValidation ) throws IOException, InterruptedException{
 
         if (plotValidation){
@@ -98,6 +105,7 @@ public class Title {
                 ", plot='" + plot + '\'' +
                 '}';
     }
+
 
 }
 

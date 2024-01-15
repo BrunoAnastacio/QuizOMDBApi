@@ -2,33 +2,45 @@ package org.quizapi.tools;
 
 //"jdbc:sqlite:/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/" + fileName;
 
+import java.io.File;
 import java.sql.*;
 
 public class DBManager {
 
-    String url;
+    static String url = "jdbc:";
 
-    public DBManager(String path, String fileName){
-        this.url = "jdbc:sqlite:" + path + fileName;
+//    public DBManager(String path, String fileName){
+//        this.url = "jdbc:sqlite:" + path + fileName;
+//    }
+
+    public static boolean doesThisFileExist(String filePath){
+        File file = new File(filePath);
+        return file.exists();
     }
 
-    public void createDatabase() {
+    public static void createDatabase(String db, String filepath) {
 
-        //String url = "jdbc:sqlite:/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/" + fileName;
+        if (!doesThisFileExist(filepath)){
+            //String url = "jdbc:sqlite:/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/" + fileName;
+            url += (db + filepath);
+            System.out.println(url);
+            try (Connection conn = DriverManager.getConnection(url)) {
+                if (conn != null) {
+                    DatabaseMetaData meta = conn.getMetaData();
+                    System.out.println("The driver name is " + meta.getDriverName());
+                    System.out.println("A new database has been created.");
+                }
 
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database has been created.");
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
             }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        }else{
+            System.out.println("Database already exists.");
         }
+
     }
 
-    public Connection getConnection(){
+    public static Connection getConnection(){
         Connection conn = null;
         try {
             // db parameters
@@ -51,7 +63,7 @@ public class DBManager {
 
     }
 
-    public void createNewTable(String sql) {
+    public static void createNewTable(String sql) {
 
         // SQL statement for creating a new table
 //        String sql = "CREATE TABLE IF NOT EXISTS warehouses (\n"
@@ -64,8 +76,9 @@ public class DBManager {
              Statement stmt = conn.createStatement()) {
             // create a new table
             stmt.execute(sql);
+            System.out.println("New table created");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[createNewTable] "+ e.getMessage());
         }
     }
 

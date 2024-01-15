@@ -1,6 +1,7 @@
 package org.quizapi.models.daos;
 
 import org.quizapi.models.beans.Player;
+import org.quizapi.tools.GameManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -83,6 +84,8 @@ public class PlayerDAO {
     public void delete(Player player){
         //String sql = "DELETE FROM player WHERE numero"
     }
+
+
 
 
 }
