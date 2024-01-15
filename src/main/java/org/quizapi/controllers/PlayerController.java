@@ -19,7 +19,7 @@ public class PlayerController {
     //-- descomentar public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
     public String createPlayer(@RequestBody Player player) {
         //-- descomentar Player savedPlayer = playerRepository.save(player);
-        Player savedPlayer = new Player(player.getName(), player.getAnswers());
+        Player savedPlayer = new Player(player.getName(), player.getScore());
         //-- descomentar return ResponseEntity.ok(savedPlayer);
 
         playerDAO.insert(player);

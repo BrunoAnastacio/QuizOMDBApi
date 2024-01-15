@@ -14,7 +14,14 @@ public class DBManager {
 
     public static void createPlayersDatabase(String db, String filepath) throws SQLException {
 
-        String sql = "CREATE TABLE IF NOT EXISTS players (ID integer PRIMARY KEY,SCORE integer NOT NULL, TIMESTAMP varchar)";
+        String sql = "CREATE TABLE IF NOT EXISTS " +
+                "players (" +
+                "ID integer PRIMARY KEY," +
+                "NAME varchar (100) NOT NULL, " +
+                "SCORE integer NOT NULL, " +
+                "TIMESTAMP_SUBSCRIPTION varchar, " +
+                "TIMESTAMP_LAST_UPDATED varchar)";
+
         url += (db + filepath);
 
 

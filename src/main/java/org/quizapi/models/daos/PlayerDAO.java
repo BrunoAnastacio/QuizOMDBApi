@@ -3,10 +3,7 @@ package org.quizapi.models.daos;
 import org.quizapi.models.beans.Player;
 import org.quizapi.tools.DBManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,26 +17,22 @@ public class PlayerDAO {
 
     public void insert(Player player){
 
-        //verificar se o nome/hash já não existe no BD
-        //ver conversão de timestamp -> string -> timestamp
-        //padronizar answers como score
-
-//        INSERT INTO players (name, score, timestamp)
-//        VALUES (?, ?, ?)
-//        ON CONFLICT (name) DO UPDATE SET score = EXCLUDED.score, timestamp = EXCLUDED.timestamp;
-
-//        Essa consulta verifica se o nome já existe na tabela.
-//        Se houver um conflito, ela atualizará o escore e o carimbo de data/hora do registro existente.
-
-        String sql = "INSERT INTO players (name, score, timestamp)"+"VALUES(?,?,?)";
+        String sql = "INSERT INTO players " +
+                "(ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED)"
+                +"VALUES(?,?,?,?,?)";
 
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
 
-            ps.setString(1, player.getName());
-            ps.setInt(2, player.getAnswers());
+            ps.setString(1, player.getId());
+            ps.setString(2, player.getName());
+            ps.setInt(3, player.getScore());
+            ps.setTimestamp(4, player.getTimestampSubscription());
+            ps.setTimestamp(5, player.getTimestampLastUpdate());
+
             ps.execute();
             ps.close();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally{
@@ -57,9 +50,15 @@ public class PlayerDAO {
             resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
-                String name = resultSet.getString(1);
-                int score = resultSet.getInt(2);
-                Player player = new Player(name, score);
+
+                //validar ordem da busca abaixo
+                String id = resultSet.getString(1);
+                String name = resultSet.getString(2);
+                int score = resultSet.getInt(3);
+                Timestamp timestampSubscription = resultSet.getTimestamp(4);
+                Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
+
+                Player player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
             }
 
             resultSet.close();
@@ -80,7 +79,7 @@ public class PlayerDAO {
         try{
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, player.getAnswers());
+            ps.setInt(1, player.getScore());
             ps.execute();
             ps.close();
             conn.close();
@@ -96,8 +95,60 @@ public class PlayerDAO {
         }
     }
 
-    public void delete(Player player){
-        //String sql = "DELETE FROM player WHERE numero"
+    public Player selectByName(String n){
+
+        String sql = "SELECT * FROM PLAYERS WHERE NAME = ?";
+        PreparedStatement ps;
+        Player player = null;
+
+        try{
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, n);
+            ResultSet resultSet = ps.executeQuery();
+
+            String id = resultSet.getString(1);
+            String name = resultSet.getString(2);
+            int score = resultSet.getInt(3);
+            Timestamp timestampSubscription = resultSet.getTimestamp(4);
+            Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
+
+            player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
+
+            resultSet.close();
+            ps.close();
+
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        } finally{
+            DBManager.closeConnection(conn);
+        }
+        return player;
+
+    }
+
+    public String delete(String n){
+
+        Player player = selectByName(n);
+        String sql = "DELETE FROM player WHERE nome = ?";
+        PreparedStatement ps;
+
+        try{
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, n);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.close();
+            ps.close();
+            System.out.println("Jogador apagado com sucesso" + player.getName());
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        } finally{
+            DBManager.closeConnection(conn);
+        }
+
+        //avaliar melhor saida
+        System.out.println("Jogador apagado com sucesso" + player.toJson());
+        return player.toJson();
+
     }
 
     // //void insertPlayer (player, score) [CREATE]
@@ -105,6 +156,7 @@ public class PlayerDAO {
     // //Player selectByName (player) [READ]
     // //void delete (player) (DELETE)
     // //List<Player> listByScore (int sizeList) (READ)
+
 
 
 

@@ -15,7 +15,7 @@ public class Game {
     public static void main(String[] args) throws IOException, InterruptedException {
 
         String name = "Brunin Jogador Caro";
-        int stars = 5, answers = 0;
+        int stars = 5, score = 0;
 
         do {
             int r;
@@ -39,8 +39,8 @@ public class Game {
 
             if (q.getOptions(r - 1).equals(q.getRightTitle())) {
                 System.out.println("Resposta Correta");
-                answers++;
-                //p1.setAnswers();
+                score++;
+                //p1.setScore();
                 System.out.println(q.getRightTitle());
                 System.out.println(q.getPlot());
 
@@ -58,15 +58,15 @@ public class Game {
             clear();
             System.out.println("========================================");
             System.out.println("Estrelas restantes: " + stars);
-            System.out.println("Respostas: " + answers);
+            System.out.println("Respostas: " + score);
             System.out.println("========================================");
 
             GameManager.resetCountRequests();
 
         } while (stars > 0);
 
-        System.out.println("Respostas Corretas: " + answers);
-        PlayerSpringlessController player = new PlayerSpringlessController(name, answers);
+        System.out.println("Respostas Corretas: " + score);
+        PlayerSpringlessController player = new PlayerSpringlessController(name, score);
         player.toString();
         //chamar ranking
     }
