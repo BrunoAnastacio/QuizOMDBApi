@@ -1,7 +1,7 @@
 package org.quizapi.models.daos;
 
 import org.quizapi.models.beans.Player;
-import org.quizapi.tools.GameManager;
+import org.quizapi.tools.DBManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,13 +13,25 @@ import java.util.Set;
 public class PlayerDAO {
     Connection conn;
 
-    PlayerDAO(Connection connection){
-        this.conn = connection;
+    PlayerDAO(){
+        this.conn = DBManager.getConnection();
     }
 
+
     public void insert(Player player){
-        //Player player = new Player();
-        String sql = "INSERT INTO player (name, score, timestamp)"+"VALUES(?,?,?)";
+
+        //verificar se o nome/hash já não existe no BD
+        //ver conversão de timestamp -> string -> timestamp
+        //padronizar answers como score
+
+//        INSERT INTO players (name, score, timestamp)
+//        VALUES (?, ?, ?)
+//        ON CONFLICT (name) DO UPDATE SET score = EXCLUDED.score, timestamp = EXCLUDED.timestamp;
+
+//        Essa consulta verifica se o nome já existe na tabela.
+//        Se houver um conflito, ela atualizará o escore e o carimbo de data/hora do registro existente.
+
+        String sql = "INSERT INTO players (name, score, timestamp)"+"VALUES(?,?,?)";
 
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -28,9 +40,10 @@ public class PlayerDAO {
             ps.setInt(2, player.getAnswers());
             ps.execute();
             ps.close();
-            conn.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally{
+            DBManager.closeConnection(conn);
         }
     }
 
@@ -51,17 +64,17 @@ public class PlayerDAO {
 
             resultSet.close();
             ps.close();
-            conn.close();
+
         } catch (SQLException e){
             throw new RuntimeException(e);
+        } finally{
+            DBManager.closeConnection(conn);
         }
-
         return players;
-
     }
 
-    public void update(Player player){
-        String sql = "UPDATE PLAYER SET score - ?";
+    public void update(Player player, int score){
+        String sql = "UPDATE PLAYERS SET score = ? WHERE name = ?";
         PreparedStatement ps;
 
         try{
@@ -77,6 +90,8 @@ public class PlayerDAO {
                 conn.rollback();
             }catch(SQLException ex){
                 throw new RuntimeException(ex);
+            } finally{
+                DBManager.closeConnection(conn);
             }
         }
     }
@@ -84,6 +99,12 @@ public class PlayerDAO {
     public void delete(Player player){
         //String sql = "DELETE FROM player WHERE numero"
     }
+
+    // //void insertPlayer (player, score) [CREATE]
+    // //void updateScore (player, score) [UPDATE]
+    // //Player selectByName (player) [READ]
+    // //void delete (player) (DELETE)
+    // //List<Player> listByScore (int sizeList) (READ)
 
 
 

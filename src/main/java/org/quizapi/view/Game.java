@@ -68,6 +68,7 @@ public class Game {
         System.out.println("Respostas Corretas: " + answers);
         PlayerSpringlessController player = new PlayerSpringlessController(name, answers);
         player.toString();
+        //chamar ranking
     }
 
     public static void clear() throws IOException, InterruptedException {

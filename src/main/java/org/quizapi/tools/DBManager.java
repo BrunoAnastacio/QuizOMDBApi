@@ -1,7 +1,5 @@
 package org.quizapi.tools;
 
-//"jdbc:sqlite:/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/" + fileName;
-
 import java.io.File;
 import java.sql.*;
 
@@ -9,81 +7,62 @@ public class DBManager {
 
     static String url = "jdbc:";
 
-//    public DBManager(String path, String fileName){
-//        this.url = "jdbc:sqlite:" + path + fileName;
-//    }
-
-    public static boolean doesThisFileExist(String filePath){
+    private static boolean doesThisFileExist(String filePath) {
         File file = new File(filePath);
         return file.exists();
     }
 
-    public static void createDatabase(String db, String filepath) {
+    public static void createPlayersDatabase(String db, String filepath) throws SQLException {
 
-        if (!doesThisFileExist(filepath)){
-            //String url = "jdbc:sqlite:/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/" + fileName;
-            url += (db + filepath);
-            System.out.println(url);
-            try (Connection conn = DriverManager.getConnection(url)) {
+        String sql = "CREATE TABLE IF NOT EXISTS players (ID integer PRIMARY KEY,SCORE integer NOT NULL, TIMESTAMP varchar)";
+        url += (db + filepath);
+
+
+        if (!doesThisFileExist(filepath)) {
+            //System.out.println(url);
+            Connection conn = DriverManager.getConnection(url);
+            try{
                 if (conn != null) {
                     DatabaseMetaData meta = conn.getMetaData();
                     System.out.println("The driver name is " + meta.getDriverName());
                     System.out.println("A new database has been created.");
+                    Statement stmt = conn.createStatement();
+                    stmt.execute(sql);
+                    System.out.println("New table created");
                 }
 
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("[createPlayersDatabase] " + e.getMessage());
+            } finally{
+                closeConnection(conn);
             }
-        }else{
-            System.out.println("Database already exists.");
+        } else {
+            System.out.println("Database in "+ url +" already exists.");
         }
-
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         Connection conn = null;
         try {
             // db parameters
             conn = DriverManager.getConnection(url);
             System.out.println("Connection to SQLite has been established.");
 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
+        } catch (Exception e) {
+            System.out.println("[getConnection] " + e.getMessage());
         }
-
         return conn;
-
     }
 
-    public static void createNewTable(String sql) {
-
-        // SQL statement for creating a new table
-//        String sql = "CREATE TABLE IF NOT EXISTS warehouses (\n"
-//                + "	id integer PRIMARY KEY,\n"
-//                + "	name text NOT NULL,\n"
-//                + "	capacity real\n"
-//                + ");";
-
-        try (Connection conn = DriverManager.getConnection(url);
-             Statement stmt = conn.createStatement()) {
-            // create a new table
-            stmt.execute(sql);
-            System.out.println("New table created");
-        } catch (SQLException e) {
-            System.out.println("[createNewTable] "+ e.getMessage());
+    public static void closeConnection(Connection conn){
+        try {
+            if (conn != null) {
+                conn.close();
+                System.out.println("Conexão fechada.");
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+
     }
-
-
-//    public static void main(String[] args) {
-//        createDatabase("test.db");
-//    }
 }
