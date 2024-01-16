@@ -1,18 +1,22 @@
 package org.quizapi.tools;
 
+import org.quizapi.App;
+
 import java.io.File;
 import java.sql.*;
 
 public class DBManager {
 
-    static String url = "jdbc:";
+    private static String initURLString(){
+        return "jdbc:";
+    }
 
     private static boolean doesThisFileExist(String filePath) {
         File file = new File(filePath);
         return file.exists();
     }
 
-    public static void createPlayersDatabase(String db, String filepath) throws SQLException {
+    public static void createPlayersDatabase(String db, String filepath) {
 
         String sql = "CREATE TABLE IF NOT EXISTS " +
                 "players (" +
@@ -22,26 +26,28 @@ public class DBManager {
                 "TIMESTAMP_SUBSCRIPTION varchar, " +
                 "TIMESTAMP_LAST_UPDATED varchar)";
 
-        url += (db + filepath);
-
+        //url += (db + filepath);
+        String url = initURLString() + db + filepath;
 
         if (!doesThisFileExist(filepath)) {
-            //System.out.println(url);
-            Connection conn = DriverManager.getConnection(url);
-            try{
-                if (conn != null) {
-                    DatabaseMetaData meta = conn.getMetaData();
-                    System.out.println("The driver name is " + meta.getDriverName());
-                    System.out.println("A new database has been created.");
-                    Statement stmt = conn.createStatement();
-                    stmt.execute(sql);
-                    System.out.println("New table created");
-                }
+            try (Connection conn = DriverManager.getConnection(url)) {
+                try {
+                    if (conn != null) {
+                        DatabaseMetaData meta = conn.getMetaData();
+                        System.out.println("The driver name is " + meta.getDriverName());
+                        System.out.println("A new database has been created.");
+                        Statement stmt = conn.createStatement();
+                        stmt.execute(sql);
+                        System.out.println("New table created");
+                    }
 
+                } catch (Exception e) {
+                    System.out.println("[createPlayersDatabase I] " + e.getMessage());
+                } finally {
+                    closeConnection(conn);
+                }
             } catch (Exception e) {
-                System.out.println("[createPlayersDatabase] " + e.getMessage());
-            } finally{
-                closeConnection(conn);
+                System.out.println("[createPlayersDatabase II] " + e.getMessage());
             }
         } else {
             System.out.println("Database in "+ url +" already exists.");
@@ -49,9 +55,12 @@ public class DBManager {
     }
 
     public static Connection getConnection() {
+        //url += path;
+        String url = initURLString() + App.AppDbURL;
         Connection conn = null;
         try {
             // db parameters
+            System.out.println(url);
             conn = DriverManager.getConnection(url);
             System.out.println("Connection to SQLite has been established.");
 

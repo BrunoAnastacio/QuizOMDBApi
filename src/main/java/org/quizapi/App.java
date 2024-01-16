@@ -12,6 +12,8 @@ import static org.quizapi.tools.DBManager.*;
 public class App {
 
     String db = SQLITE.toString();
+    public static String dbPlayersFilepath = "/home/wsl/IdeaProjects/GuessTheTitle/src/main/resources/db/players.db";
+    public static String AppDbURL = SQLITE.toString() + dbPlayersFilepath;
 
     public static void main(String[] args) {
 

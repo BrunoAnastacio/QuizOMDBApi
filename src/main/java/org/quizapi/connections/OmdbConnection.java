@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Random;
 
 public class OmdbConnection {
-    private String apiKey = System.getenv("API_KEY");
+    private final String apiKey = System.getenv("API_KEY");
     private String url= "https://www.omdbapi.com/?apikey="+apiKey;
     private String json;
     private Title titulo;
-    private List<String> fakeJson = new ArrayList<>();
+    private final List<String> fakeJson = new ArrayList<>();
     //private Cache cache = new Cache();
 
     public void fillFakeJson(){

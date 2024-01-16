@@ -1,5 +1,6 @@
 package org.quizapi.models.daos;
 
+import org.quizapi.App;
 import org.quizapi.models.beans.Player;
 import org.quizapi.tools.DBManager;
 
@@ -10,32 +11,40 @@ import java.util.Set;
 public class PlayerDAO {
     Connection conn;
 
-    PlayerDAO(){
+    public PlayerDAO() {
         this.conn = DBManager.getConnection();
     }
 
 
-    public void insert(Player player){
+    public void insert(Player player) {
 
-        String sql = "INSERT INTO players " +
-                "(ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED)"
-                +"VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO players (ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED) " +
+                "VALUES (?, ?, ?, ?, ?) " +
+                "ON CONFLICT (NAME) DO UPDATE " +
+                "SET SCORE = EXCLUDED.SCORE, " +
+                "TIMESTAMP_LAST_UPDATED = EXCLUDED.TIMESTAMP_LAST_UPDATED";
 
-        try{
+        try {
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, player.getId());
             ps.setString(2, player.getName());
             ps.setInt(3, player.getScore());
-            ps.setTimestamp(4, player.getTimestampSubscription());
-            ps.setTimestamp(5, player.getTimestampLastUpdate());
+            //ps.setTimestamp(4, player.getTimestampSubscription());
+            //ps.setTimestamp(5, player.getTimestampLastUpdate());
+
+            ps.setString(4, String.valueOf(player.getTimestampSubscription()));
+            ps.setString(5, String.valueOf(player.getTimestampLastUpdate()));
+
 
             ps.execute();
             ps.close();
 
+            System.out.println("Jogador persistido: " + player.toJson());
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally{
+        } finally {
             DBManager.closeConnection(conn);
         }
     }
@@ -43,7 +52,7 @@ public class PlayerDAO {
     public Set<Player> toList() {
         ResultSet resultSet;
         Set<Player> players = new HashSet<>();
-        String sql = "SELECT * FROM player ORDERBY score DESC";
+        String sql = "SELECT * FROM players ORDER BY score DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -59,49 +68,58 @@ public class PlayerDAO {
                 Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
 
                 Player player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
+                players.add(player);
             }
 
             resultSet.close();
             ps.close();
 
-        } catch (SQLException e){
-            throw new RuntimeException(e);
-        } finally{
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //throw new RuntimeException();
+
+        } finally {
             DBManager.closeConnection(conn);
         }
         return players;
     }
+   public void update(Player player) {
+        //selectbyname
+       //compara os scores
+       //se o score informado for maior, inserir
+       //se não, agir silenciosamente
 
-    public void update(Player player, int score){
-        String sql = "UPDATE PLAYERS SET score = ? WHERE name = ?";
-        PreparedStatement ps;
+//        String sql = "UPDATE PLAYERS SET score = ? WHERE name = ?";
+//        PreparedStatement ps;
+//
+//        try {
+//            conn.setAutoCommit(false);
+//            ps = conn.prepareStatement(sql);
+//            ps.setInt(1, player.getScore());
+//            ps.execute();
+//            ps.close();
+//            conn.close();
+//            conn.commit();
+//
+//        } catch (SQLException e) {
+//            try {
+//                conn.rollback();
+//            } catch (SQLException ex) {
+//                throw new RuntimeException(ex);
+//            } finally {
+//                DBManager.closeConnection(conn);
+//            }
+//        }
+   }
 
-        try{
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, player.getScore());
-            ps.execute();
-            ps.close();
-            conn.close();
-            conn.commit();
-        }catch(SQLException e){
-            try{
-                conn.rollback();
-            }catch(SQLException ex){
-                throw new RuntimeException(ex);
-            } finally{
-                DBManager.closeConnection(conn);
-            }
-        }
-    }
-
-    public Player selectByName(String n){
-
+    public Player selectByName(String n) {
+        // criar exceção para casos onde a consulta retorna vazio
+        // criar exceção para casos onde o usuario passa dados errados
         String sql = "SELECT * FROM PLAYERS WHERE NAME = ?";
         PreparedStatement ps;
         Player player = null;
 
-        try{
+        try {
             ps = conn.prepareStatement(sql);
             ps.setString(1, n);
             ResultSet resultSet = ps.executeQuery();
@@ -117,39 +135,44 @@ public class PlayerDAO {
             resultSet.close();
             ps.close();
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally{
+        } finally {
             DBManager.closeConnection(conn);
         }
         return player;
 
     }
 
-    public String delete(String n){
+    public String delete(String n) {
 
         Player player = selectByName(n);
-        String sql = "DELETE FROM player WHERE nome = ?";
-        PreparedStatement ps;
+        if (player.getName() == null) {
+            return "Impossível deletar. Dados inexistentes em nossa base";
+        } else {
+            this.conn = DBManager.getConnection();
+            String sql = "DELETE FROM players WHERE name = ?";
+            PreparedStatement ps;
 
-        try{
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, n);
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.close();
-            ps.close();
-            System.out.println("Jogador apagado com sucesso" + player.getName());
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        } finally{
-            DBManager.closeConnection(conn);
+            try {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, n);
+                ps.executeUpdate();
+                ps.close();
+                DBManager.closeConnection(conn);
+                return("Jogador apagado com sucesso:" + player.getName());
+            } catch (Exception e) {
+                //throw new RuntimeException(e);
+                e.printStackTrace();
+                DBManager.closeConnection(conn);
+            }
+
+        return "Jogador não apagado.";
         }
 
-        //avaliar melhor saida
-        System.out.println("Jogador apagado com sucesso" + player.toJson());
-        return player.toJson();
 
     }
+}
 
     // //void insertPlayer (player, score) [CREATE]
     // //void updateScore (player, score) [UPDATE]
@@ -161,4 +184,4 @@ public class PlayerDAO {
 
 
 
-}
+

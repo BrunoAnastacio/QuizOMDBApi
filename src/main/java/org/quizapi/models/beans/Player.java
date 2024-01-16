@@ -19,11 +19,11 @@ public class Player {
     }
 
     //persistencia no BD
-    public Player(String name, int score, Timestamp timestampLastUpdate){
+    public Player(String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
-        this.timestampSubscription = new Timestamp(System.currentTimeMillis());
+        this.timestampSubscription = timestampSubscription;
         this.id = String.valueOf(name.hashCode());
     }
 
