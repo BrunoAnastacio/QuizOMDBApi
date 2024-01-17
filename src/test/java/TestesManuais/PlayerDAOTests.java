@@ -8,7 +8,8 @@ import org.quizapi.tools.DBManager;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.List;
+
 
 public class PlayerDAOTests {
 
@@ -18,8 +19,9 @@ public class PlayerDAOTests {
         //testeInsertPlayer();
         //showTimestamp();
         //testeSelectByName();
-        //testeToList();
-        testeDelete();
+        testeToList();
+        //testeDelete();
+        //testeUpdate();
     }
 
     static void testeCreatePlayersDatabase(){
@@ -45,7 +47,7 @@ public class PlayerDAOTests {
 
     static void testeInsertPlayer(){
         Timestamp t = new Timestamp(System.currentTimeMillis());
-        Player p = new Player("Benjamin Arrola",48, t);
+        Player p = new Player("Benjamin Arrola",0, t);
         PlayerDAO dao = new PlayerDAO();
         dao.insert(p);
         System.out.println("Inserido");
@@ -54,16 +56,17 @@ public class PlayerDAOTests {
     static void testeSelectByName(){
         PlayerDAO dao = new PlayerDAO();
         Player p = new Player();
-        p = dao.selectByName("Fabão");
+        p = dao.selectByName("JOSÉ");
         System.out.println("Retorno:");
         System.out.println(p.toJson());
+        System.out.println(p.getScore());
 
     }
 
     static void testeToList(){
         PlayerDAO dao = new PlayerDAO();
         Player p = new Player();
-        Set<Player> players = dao.toList();
+        List<Player> players = dao.toList();
         for(Player player: players){
             System.out.println(player.toJson());
         }
@@ -73,10 +76,14 @@ public class PlayerDAOTests {
     static void testeDelete(){
         PlayerDAO dao = new PlayerDAO();
         //Player p = new Player();
-        System.out.println(dao.delete("geringonca"));
+        System.out.println(dao.delete("Geringonça"));
     }
 
-
-
+    static void testeUpdate(){
+        Timestamp t = new Timestamp(System.currentTimeMillis());
+        Player p = new Player("Paul Molly",-6, t);
+        PlayerDAO dao = new PlayerDAO();
+        dao.update(p);
+    }
 
 }

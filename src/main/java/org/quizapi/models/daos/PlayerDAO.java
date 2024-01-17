@@ -1,12 +1,12 @@
 package org.quizapi.models.daos;
 
-import org.quizapi.App;
 import org.quizapi.models.beans.Player;
 import org.quizapi.tools.DBManager;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class PlayerDAO {
     Connection conn;
@@ -20,7 +20,7 @@ public class PlayerDAO {
 
         String sql = "INSERT INTO players (ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED) " +
                 "VALUES (?, ?, ?, ?, ?) " +
-                "ON CONFLICT (NAME) DO UPDATE " +
+                "ON CONFLICT (ID) DO UPDATE " +
                 "SET SCORE = EXCLUDED.SCORE, " +
                 "TIMESTAMP_LAST_UPDATED = EXCLUDED.TIMESTAMP_LAST_UPDATED";
 
@@ -49,9 +49,9 @@ public class PlayerDAO {
         }
     }
 
-    public Set<Player> toList() {
+    public List<Player> toList() {
         ResultSet resultSet;
-        Set<Player> players = new HashSet<>();
+        List<Player> players = new ArrayList<>();
         String sql = "SELECT * FROM players ORDER BY score DESC";
 
         try {
@@ -83,34 +83,37 @@ public class PlayerDAO {
         }
         return players;
     }
-   public void update(Player player) {
-        //selectbyname
-       //compara os scores
-       //se o score informado for maior, inserir
-       //se não, agir silenciosamente
+   public String update(Player newPlayerData) {
 
-//        String sql = "UPDATE PLAYERS SET score = ? WHERE name = ?";
-//        PreparedStatement ps;
-//
-//        try {
-//            conn.setAutoCommit(false);
-//            ps = conn.prepareStatement(sql);
-//            ps.setInt(1, player.getScore());
-//            ps.execute();
-//            ps.close();
-//            conn.close();
-//            conn.commit();
-//
-//        } catch (SQLException e) {
-//            try {
-//                conn.rollback();
-//            } catch (SQLException ex) {
-//                throw new RuntimeException(ex);
-//            } finally {
-//                DBManager.closeConnection(conn);
-//            }
-//        }
+            //revisar condições
+       Player gotPlayer = selectByName(newPlayerData.getName());
+       if(gotPlayer.getName() == null || newPlayerData.getScore() > gotPlayer.getScore()){
+           this.conn = DBManager.getConnection();
+           insert(newPlayerData);
+           return newPlayerData.toJson();
+       }
+       else if (gotPlayer.getName() != null) return "404";
+       else return "500";
+
+
    }
+
+    //==================================================================
+    //SENTENÇA A VALIDAR:
+    //  if(gotPlayer.getName() == null ||
+    //     newPlayerData.getScore() > gotPlayer.getScore())
+    //      insert(newPlayerData);
+
+    //TABELA VERDADE:
+    //gotPlayer.getName() == null                         V  V  F  F
+    //newPlayerData.getScore() > gotPlayer.getScore()     V  F  V  F
+    //insert(newPlayerData);                              V  V  V  F
+
+    //CENÁRIOS:
+    //Salvar score 0 para um nome que não existe        V    V
+    //Salvar score > para um nome que existe            V       V
+    //Salvar score <= para nome que existe              F          F
+    //==================================================================
 
     public Player selectByName(String n) {
         // criar exceção para casos onde a consulta retorna vazio
@@ -148,7 +151,7 @@ public class PlayerDAO {
 
         Player player = selectByName(n);
         if (player.getName() == null) {
-            return "Impossível deletar. Dados inexistentes em nossa base";
+            return "404";
         } else {
             this.conn = DBManager.getConnection();
             String sql = "DELETE FROM players WHERE name = ?";
@@ -165,9 +168,10 @@ public class PlayerDAO {
                 //throw new RuntimeException(e);
                 e.printStackTrace();
                 DBManager.closeConnection(conn);
+                return "500";
             }
 
-        return "Jogador não apagado.";
+
         }
 
 

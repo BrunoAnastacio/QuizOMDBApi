@@ -1,9 +1,9 @@
 # Tarefas
 
-    - Rever fluxo do Update
+    (ok) Rever fluxo do Update
     - Criar rotas de crud do Player
     - Refatorar, organizando por domínios
-    - Criar testes
+    - Criar testes automatizados
     - Criar autenticação 
 
 
