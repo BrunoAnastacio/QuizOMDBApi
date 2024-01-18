@@ -66,10 +66,11 @@ public class PlayerDAOTests {
     static void testeToList(){
         PlayerDAO dao = new PlayerDAO();
         Player p = new Player();
-        List<Player> players = dao.toList();
-        for(Player player: players){
-            System.out.println(player.toJson());
-        }
+        List<String> players = dao.toList();
+        System.out.println(players);
+//        for(Player player: players){
+//            System.out.println(player.toJson());
+//        }
 
     }
 

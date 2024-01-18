@@ -1,5 +1,6 @@
 package org.quizapi.models.daos;
 
+import org.jetbrains.annotations.NotNull;
 import org.quizapi.models.beans.Player;
 import org.quizapi.tools.DBManager;
 
@@ -16,7 +17,7 @@ public class PlayerDAO {
     }
 
 
-    public void insert(Player player) {
+    public void insert(@NotNull Player player) {
 
         String sql = "INSERT INTO players (ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED) " +
                 "VALUES (?, ?, ?, ?, ?) " +
@@ -30,13 +31,8 @@ public class PlayerDAO {
             ps.setString(1, player.getId());
             ps.setString(2, player.getName());
             ps.setInt(3, player.getScore());
-            //ps.setTimestamp(4, player.getTimestampSubscription());
-            //ps.setTimestamp(5, player.getTimestampLastUpdate());
-
             ps.setString(4, String.valueOf(player.getTimestampSubscription()));
             ps.setString(5, String.valueOf(player.getTimestampLastUpdate()));
-
-
             ps.execute();
             ps.close();
 
@@ -49,9 +45,9 @@ public class PlayerDAO {
         }
     }
 
-    public List<Player> toList() {
+    public List<String> toList() {
         ResultSet resultSet;
-        List<Player> players = new ArrayList<>();
+        List<String> players = new ArrayList<>();
         String sql = "SELECT * FROM players ORDER BY score DESC";
 
         try {
@@ -68,88 +64,72 @@ public class PlayerDAO {
                 Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
 
                 Player player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
-                players.add(player);
+                players.add(player.toJson());
             }
 
             resultSet.close();
             ps.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            //throw new RuntimeException();
+            System.out.println(e.getMessage());
 
         } finally {
             DBManager.closeConnection(conn);
         }
         return players;
     }
-   public String update(Player newPlayerData) {
 
-            //revisar condições
-       Player gotPlayer = selectByName(newPlayerData.getName());
-       if(gotPlayer.getName() == null || newPlayerData.getScore() > gotPlayer.getScore()){
+   public String update(int id, Player newPlayerData) {
+        //revisar condições
+       try{
+           Player gotPlayer = selectById(id);
+           gotPlayer.setScore(newPlayerData.getScore());
+           gotPlayer.setTimestampLastUpdate(new Timestamp(System.currentTimeMillis()));
            this.conn = DBManager.getConnection();
-           insert(newPlayerData);
-           return newPlayerData.toJson();
+           insert(gotPlayer);
+           return gotPlayer.toJson();
+       }catch (Exception e){
+           System.out.println(e.getMessage());
+           return "404";
        }
-       else if (gotPlayer.getName() != null) return "404";
-       else return "500";
-
-
    }
 
-    //==================================================================
-    //SENTENÇA A VALIDAR:
-    //  if(gotPlayer.getName() == null ||
-    //     newPlayerData.getScore() > gotPlayer.getScore())
-    //      insert(newPlayerData);
-
-    //TABELA VERDADE:
-    //gotPlayer.getName() == null                         V  V  F  F
-    //newPlayerData.getScore() > gotPlayer.getScore()     V  F  V  F
-    //insert(newPlayerData);                              V  V  V  F
-
-    //CENÁRIOS:
-    //Salvar score 0 para um nome que não existe        V    V
-    //Salvar score > para um nome que existe            V       V
-    //Salvar score <= para nome que existe              F          F
-    //==================================================================
-
-    public Player selectByName(String n) {
+    public Player selectById(int id) {
         // criar exceção para casos onde a consulta retorna vazio
         // criar exceção para casos onde o usuario passa dados errados
-        String sql = "SELECT * FROM PLAYERS WHERE NAME = ?";
+        String sql = "SELECT * FROM PLAYERS WHERE ID = ?";
         PreparedStatement ps;
-        Player player = null;
+        Player player;
 
         try {
             ps = conn.prepareStatement(sql);
-            ps.setString(1, n);
+            ps.setInt(1,id);
+            //ps.setString(1, n);
             ResultSet resultSet = ps.executeQuery();
 
-            String id = resultSet.getString(1);
+            String id_response = resultSet.getString(1);
             String name = resultSet.getString(2);
             int score = resultSet.getInt(3);
             Timestamp timestampSubscription = resultSet.getTimestamp(4);
             Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
 
-            player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
+            player = new Player(id_response, name, score, timestampSubscription, timestampLastUpdate);
 
             resultSet.close();
             ps.close();
+            DBManager.closeConnection(conn);
+            return player;
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("[selectByName]" + e);
         } finally {
             DBManager.closeConnection(conn);
         }
-        return player;
-
+        return null;
     }
 
     public String delete(String n) {
-
-        Player player = selectByName(n);
+        Player player = selectById(Integer.parseInt(n));
         if (player.getName() == null) {
             return "404";
         } else {
@@ -166,25 +146,13 @@ public class PlayerDAO {
                 return("Jogador apagado com sucesso:" + player.getName());
             } catch (Exception e) {
                 //throw new RuntimeException(e);
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 DBManager.closeConnection(conn);
                 return "500";
             }
-
-
         }
-
-
     }
 }
-
-    // //void insertPlayer (player, score) [CREATE]
-    // //void updateScore (player, score) [UPDATE]
-    // //Player selectByName (player) [READ]
-    // //void delete (player) (DELETE)
-    // //List<Player> listByScore (int sizeList) (READ)
-
-
 
 
 

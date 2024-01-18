@@ -3,6 +3,7 @@ package org.quizapi.models.beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 
@@ -10,7 +11,7 @@ public class Player {
     private String name;
     private int score;
     private final Timestamp timestampSubscription;
-    private final Timestamp timestampLastUpdate;
+    private Timestamp timestampLastUpdate;
     private String id;
 
     public Player(){
@@ -19,7 +20,7 @@ public class Player {
     }
 
     //persistencia no BD
-    public Player(String name, int score, Timestamp timestampSubscription){
+    public Player(@NotNull String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
@@ -27,7 +28,7 @@ public class Player {
         this.id = String.valueOf(name.hashCode());
     }
 
-    //busca no BD
+    //busca/update no BD
     public Player(String id, String name, int score, Timestamp timestampLastUpdate, Timestamp timestampSubscription) {
         this.name = name;
         this.score = score;
@@ -37,12 +38,12 @@ public class Player {
     }
 
     //update no BD
-    public Player(String id, String name, int score, Timestamp timestampLastUpdate){
+    public Player(int id, String name, int score, Timestamp timastampSubscription){
         this.name = name;
         this.score = score;
-        this.timestampLastUpdate = timestampLastUpdate;
+        this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
         this.timestampSubscription = null; //buscar no BD
-        this.id = id;
+        this.id = String.valueOf(id);
     }
 
     //delete no BD
@@ -54,6 +55,16 @@ public class Player {
 //        this.id = id;
     }
 
+    //recebendo a requisição post
+    public Player(@NotNull String name, int score){
+        this.name = name;
+        this.score = score;
+        this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
+        this.timestampSubscription = new Timestamp(System.currentTimeMillis());
+        this.id = String.valueOf(name.hashCode());
+    }
+
+
     public String getId(){
         return id;
     }
@@ -64,6 +75,9 @@ public class Player {
 
     public Timestamp getTimestampLastUpdate() {
         return timestampLastUpdate;
+    }
+    public void setTimestampLastUpdate( Timestamp t){
+        this.timestampLastUpdate = t;
     }
 
     public String getName() {
