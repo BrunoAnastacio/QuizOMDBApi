@@ -80,7 +80,6 @@ public class PlayerDAO {
     }
 
    public String update(int id, Player newPlayerData) {
-        //revisar condições
        try{
            Player gotPlayer = selectById(id);
            gotPlayer.setScore(newPlayerData.getScore());
@@ -128,28 +127,23 @@ public class PlayerDAO {
         return null;
     }
 
-    public String delete(String n) {
-        Player player = selectById(Integer.parseInt(n));
-        if (player.getName() == null) {
-            return "404";
-        } else {
-            this.conn = DBManager.getConnection();
-            String sql = "DELETE FROM players WHERE name = ?";
-            PreparedStatement ps;
+    public String delete(int id) {
 
-            try {
-                ps = conn.prepareStatement(sql);
-                ps.setString(1, n);
-                ps.executeUpdate();
-                ps.close();
-                DBManager.closeConnection(conn);
-                return("Jogador apagado com sucesso:" + player.getName());
-            } catch (Exception e) {
-                //throw new RuntimeException(e);
-                System.out.println(e.getMessage());
-                DBManager.closeConnection(conn);
-                return "500";
-            }
+        try{
+            Player gotPlayer = selectById(id);
+            this.conn = DBManager.getConnection();
+            String sql = "DELETE FROM players WHERE id = ?";
+            PreparedStatement ps;
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            DBManager.closeConnection(conn);
+            return "{\"response\": \"Jogador excluido com sucesso\"}";
+        } catch(Exception e){
+            DBManager.closeConnection(conn);
+            System.out.println("[delete] " + e);
+            return "{\"response\": \"Jogador não encontrado\"}";
         }
     }
 }

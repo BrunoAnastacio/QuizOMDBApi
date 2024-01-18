@@ -34,13 +34,15 @@ public class PlayerController {
         return player.toJson();
     }
 
-    @DeleteMapping("/delete/{name}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT) //HTTP404
-    public void deletePlayerByName(@PathVariable String name){
-        String daoResponse = playerDAO.delete(name);
-        if(daoResponse == "404") throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        else if(daoResponse == "500") throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        else System.out.println("Requisição atendida");
+    @DeleteMapping("/delete/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT) //HTTP204
+    public String deletePlayerByName(@PathVariable int id){
+        try{
+            return playerDAO.delete(id);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
 
