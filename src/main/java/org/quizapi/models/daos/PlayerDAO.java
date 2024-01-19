@@ -1,6 +1,7 @@
 package org.quizapi.models.daos;
 
 import org.jetbrains.annotations.NotNull;
+import org.quizapi.exceptions.NotFoundIDException;
 import org.quizapi.models.beans.Player;
 import org.quizapi.tools.DBManager;
 
@@ -79,18 +80,28 @@ public class PlayerDAO {
         return players;
     }
 
-   public String update(int id, Player newPlayerData) {
-       try{
-           Player gotPlayer = selectById(id);
-           gotPlayer.setScore(newPlayerData.getScore());
-           gotPlayer.setTimestampLastUpdate(new Timestamp(System.currentTimeMillis()));
-           this.conn = DBManager.getConnection();
-           insert(gotPlayer);
-           return gotPlayer.toJson();
-       }catch (Exception e){
-           System.out.println(e.getMessage());
-           return "404";
-       }
+   public Player update(int id, Player toUpdate) throws NotFoundIDException {
+        Player gotPlayer = selectById(id);
+        this.conn = DBManager.getConnection();
+        if(gotPlayer.isEmpty())
+        {
+            System.out.println("NotFoundException");
+            throw new NotFoundIDException();
+        }
+        else{
+            //criar um player pra inserir no banco
+            Player updatedPlayer = new Player(
+                    gotPlayer.getId(),
+                    gotPlayer.getName(),
+                    toUpdate.getScore(),
+                    gotPlayer.getTimestampSubscription(),
+                    new Timestamp(System.currentTimeMillis())
+                );
+            System.out.println(updatedPlayer);
+            insert(updatedPlayer);
+            DBManager.closeConnection(conn);
+            return updatedPlayer;
+        }
    }
 
     public Player selectById(int id) {
@@ -121,16 +132,15 @@ public class PlayerDAO {
 
         } catch (SQLException e) {
             System.out.println("[selectByName]" + e);
-        } finally {
             DBManager.closeConnection(conn);
+            return null;
         }
-        return null;
     }
 
-    public String delete(int id) {
+    public void delete(int id) {
 
         try{
-            Player gotPlayer = selectById(id);
+            //Player gotPlayer = selectById(id);
             this.conn = DBManager.getConnection();
             String sql = "DELETE FROM players WHERE id = ?";
             PreparedStatement ps;
@@ -139,11 +149,11 @@ public class PlayerDAO {
             ps.executeUpdate();
             ps.close();
             DBManager.closeConnection(conn);
-            return "{\"response\": \"Jogador excluido com sucesso\"}";
+            //return "{\"response\": \"Jogador excluido com sucesso\"}";
         } catch(Exception e){
             DBManager.closeConnection(conn);
-            System.out.println("[delete] " + e);
-            return "{\"response\": \"Jogador não encontrado\"}";
+            System.out.println("[delete] " + e.getMessage());
+            //return "{\"response\": \"Jogador não encontrado\"}";
         }
     }
 }

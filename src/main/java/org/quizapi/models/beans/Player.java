@@ -28,8 +28,8 @@ public class Player {
         this.id = String.valueOf(name.hashCode());
     }
 
-    //busca/update no BD
-    public Player(String id, String name, int score, Timestamp timestampLastUpdate, Timestamp timestampSubscription) {
+    //busca
+    public Player(String id, String name, int score, Timestamp timestampSubscription, Timestamp timestampLastUpdate) {
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = timestampLastUpdate;
@@ -64,7 +64,6 @@ public class Player {
         this.id = String.valueOf(name.hashCode());
     }
 
-
     public String getId(){
         return id;
     }
@@ -90,6 +89,10 @@ public class Player {
 
     public void setScore(int score){
         this.score = score;
+    }
+
+    public boolean isEmpty(){
+        return this.name == null;
     }
 
     @Override

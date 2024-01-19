@@ -1,5 +1,6 @@
 package org.quizapi.controllers;
 
+import org.quizapi.exceptions.NotFoundIDException;
 import org.quizapi.models.beans.Player;
 import org.quizapi.models.daos.PlayerDAO;
 import org.springframework.http.HttpStatus;
@@ -10,51 +11,68 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping("/players")
+@RequestMapping("/players/v1")
 public class PlayerController {
-
     private PlayerDAO playerDAO = new PlayerDAO();
 
-    @PostMapping(value = "/new", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/n", consumes = "application/json", produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED) //
     public String createPlayer(@RequestBody Player player) {
-        playerDAO.insert(player);
-        return player.toJson();
+        try {
+            playerDAO.insert(player);
+            return player.toJson();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/all")
-    public List<String> listPlayers(){
+
+    @GetMapping("/")
+    public List<String> listPlayers() {
         return playerDAO.toList();
     }
 
-    @GetMapping("/search")
-    public String searchPlayerById(@RequestParam("id") int id){
-        Player player = playerDAO.selectById(id);
-        //if (player.getName() == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND); //HTTP404
-        return player.toJson();
+
+    @GetMapping("")
+    public String searchPlayerById(@RequestParam("id") int id) {
+        try {
+            Player player = playerDAO.selectById(id);
+            return player.toJson();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @DeleteMapping("/delete/{id}")
+
+    @DeleteMapping("/{id}/del")
     @ResponseStatus(code = HttpStatus.NO_CONTENT) //HTTP204
-    public String deletePlayerByName(@PathVariable int id){
-        try{
-            return playerDAO.delete(id);
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+    public void deletePlayerByName(@PathVariable int id) {
+        Player player = playerDAO.selectById(id);
+        //System.out.println(player.isEmpty());
+        if (player.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        try {
+            playerDAO.delete(id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public String updatePlayerById(@PathVariable int id, @RequestBody Player player){
-        try{
-            return playerDAO.update(id, player);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    public Player updatePlayerById(@PathVariable int id, @RequestBody Player toUpdate) {
+        try {
+            System.out.println(toUpdate.toJson());
+            return playerDAO.update(id, toUpdate);
+        } catch (NotFoundIDException n) {
+            System.out.println("Erro404");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //erro404
+        } catch (Exception e) {
+            System.out.println("Erro500");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR); //erro500
         }
     }
-
 }
