@@ -38,7 +38,7 @@ public class Player {
     }
 
     //update no BD
-    public Player(int id, String name, int score, Timestamp timastampSubscription){
+    public Player(int id, String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());

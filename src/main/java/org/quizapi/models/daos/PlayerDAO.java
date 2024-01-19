@@ -46,7 +46,7 @@ public class PlayerDAO {
         }
     }
 
-    public List<String> toList() {
+    public List<String> toList() throws NotFoundIDException {
         ResultSet resultSet;
         List<String> players = new ArrayList<>();
         String sql = "SELECT * FROM players ORDER BY score DESC";
@@ -71,9 +71,13 @@ public class PlayerDAO {
             resultSet.close();
             ps.close();
 
+            System.out.println("tolist" + players);
+
+            if (players.isEmpty()) {
+                throw new NotFoundIDException();
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-
         } finally {
             DBManager.closeConnection(conn);
         }
@@ -105,8 +109,6 @@ public class PlayerDAO {
    }
 
     public Player selectById(int id) {
-        // criar exceção para casos onde a consulta retorna vazio
-        // criar exceção para casos onde o usuario passa dados errados
         String sql = "SELECT * FROM PLAYERS WHERE ID = ?";
         PreparedStatement ps;
         Player player;
@@ -114,7 +116,6 @@ public class PlayerDAO {
         try {
             ps = conn.prepareStatement(sql);
             ps.setInt(1,id);
-            //ps.setString(1, n);
             ResultSet resultSet = ps.executeQuery();
 
             String id_response = resultSet.getString(1);

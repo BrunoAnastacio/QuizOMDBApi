@@ -7,15 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
 @RequestMapping("/players/v1")
 public class PlayerController {
-    private PlayerDAO playerDAO = new PlayerDAO();
+    private final PlayerDAO playerDAO = new PlayerDAO();
 
-    @PostMapping(value = "/n", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "", consumes = "application/json", produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED) //
     public String createPlayer(@RequestBody Player player) {
         try {
@@ -29,7 +28,15 @@ public class PlayerController {
 
     @GetMapping("/")
     public List<String> listPlayers() {
-        return playerDAO.toList();
+        try {
+            return playerDAO.toList();
+        }catch (ResponseStatusException r) {
+            System.out.println(r.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -37,15 +44,23 @@ public class PlayerController {
     public String searchPlayerById(@RequestParam("id") int id) {
         try {
             Player player = playerDAO.selectById(id);
-            return player.toJson();
-        } catch (Exception e) {
+            if(player.isEmpty()){
+                System.out.println("ID não encontrado");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }else{
+                return player.toJson();
+            }
+        } catch (ResponseStatusException r) {
+            System.out.println(r.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
             System.out.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-    @DeleteMapping("/{id}/del")
+    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT) //HTTP204
     public void deletePlayerByName(@PathVariable int id) {
         Player player = playerDAO.selectById(id);

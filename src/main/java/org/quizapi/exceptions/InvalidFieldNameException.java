@@ -10,6 +10,6 @@ public class InvalidFieldNameException extends Exception{
 
     @Override
     public String getMessage() {
-        return this.getMessage();
+        return super.getMessage();
     }
 }

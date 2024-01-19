@@ -3,19 +3,18 @@ package org.quizapi.models.beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Question {
 
-    private String plot; //enunciado
-    private List<String> options = new ArrayList<>(); //multiplas escolhas
-    private String rightTitle; //resposta correta
+    private final String plot; //enunciado
+    private final List<String> options = new ArrayList<>(); //multiplas escolhas
+    private final String rightTitle; //resposta correta
 
 
-    public Question() throws IOException, InterruptedException {
+    public Question() throws InterruptedException {
 
         Title title = new Title(true);
 
@@ -57,7 +56,7 @@ public class Question {
                 ", rightTitle='" + rightTitle + '\'' +
                 '}';
     }
-    public String toJson() throws IOException, InterruptedException {
+    public String toJson() throws InterruptedException {
         Question question = new Question();
         Gson gson = new GsonBuilder().create();
         return gson.toJson(question);

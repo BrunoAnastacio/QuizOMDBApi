@@ -10,7 +10,7 @@ public class ProxyBlockException extends Exception{
 
     public String getMessage(){
         //return super.getMessage();
-        return this.getMessage();
+        return super.getMessage();
     }
 
 }

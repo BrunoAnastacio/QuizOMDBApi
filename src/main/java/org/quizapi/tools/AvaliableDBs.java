@@ -5,7 +5,7 @@ public enum AvaliableDBs {
     MYSQL("mysql:"),
     POSTEGRESQL("postegresql:");
 
-    private String dbName;
+    private final String dbName;
 
     AvaliableDBs(String dbName) {
         this.dbName = dbName;

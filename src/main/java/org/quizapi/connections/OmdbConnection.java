@@ -112,12 +112,12 @@ public class OmdbConnection {
         }
     }
 
-    public Title searchTitlePerId() throws IOException, InterruptedException {
+    public Title searchTitlePerId(){
         return titulo;
     }
 
 
-    public OmdbConnection() throws IOException, InterruptedException{
+    public OmdbConnection() throws InterruptedException{
         try{
             externalDataCall();
         }catch (ProxyBlockException p){
@@ -128,14 +128,14 @@ public class OmdbConnection {
         }
     }
 
-    public void externalDataCall() throws IOException, ProxyBlockException, InterruptedException{
+    public void externalDataCall() throws ProxyBlockException, InterruptedException{
         generateURL();
         try{
             HTTPCall();
             
-        }catch (InterruptedException ie){
-            int i = 0;
-            for (i=0; i<5;i++){
+        }catch (Exception e){
+            int i;
+            for (i = 0; i<5;i++){
                 System.out.println("Tentativa " + i+1 + " de 5. Requisição sem sucesso");
                 HTTPCall();
             }

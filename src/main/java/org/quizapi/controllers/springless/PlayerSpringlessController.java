@@ -7,16 +7,14 @@ import java.sql.Timestamp;
 
 public class PlayerSpringlessController {
 
-    Player player = null;
+    Player player;
 
     public PlayerSpringlessController(String name, int score){
-        Player player = null;
         PlayerDAO playerDAO = new PlayerDAO();
-        Timestamp timestamp = null;
-        player = new Player(name, score, timestamp = new Timestamp(System.currentTimeMillis()));
+        //Timestamp timestamp;
+        player = new Player(name, score, new Timestamp(System.currentTimeMillis()));
         playerDAO.insert(player);
     }
-
     @Override
     public String toString() {
         return player.toString();

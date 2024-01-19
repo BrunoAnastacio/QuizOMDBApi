@@ -3,8 +3,6 @@ package org.quizapi.models.beans;
 import org.quizapi.connections.OmdbConnection;
 import org.quizapi.tools.GameManager;
 
-import java.io.IOException;
-
 public class Title {
 
     private String name;
@@ -17,18 +15,11 @@ public class Title {
         this.plot = meuTituloOmdb.Plot();
         this.imdbID = meuTituloOmdb.imdbID();
         this.error = meuTituloOmdb.Error();
-        if(meuTituloOmdb == null)
-            this.error = "Error getting data";
+//        if(meuTituloOmdb == null)
+//            this.error = "Error getting data";
     }
 
-
-
-//    public void foo(){
-//        GameManager.addInCacheTitle(this.imdbID);
-//        GameManager.containsInCache(this.imdbID);
-//    }
-
-    public Title(boolean plotValidation ) throws IOException, InterruptedException{
+    public Title(boolean plotValidation ) throws InterruptedException{
 
         if (plotValidation){
             do{
@@ -66,10 +57,6 @@ public class Title {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPlot() {
         return this.plot;
     }
@@ -78,16 +65,8 @@ public class Title {
         return error;
     }
 
-    public void setPlot(String plot) {
-        this.plot = plot;
-    }
-
     public String getImdbID(){
         return this.imdbID;
-    }
-
-    public void setImdbID(String id){
-        this.imdbID = id;
     }
 
     public boolean isAInvalidTitle() {
