@@ -75,6 +75,14 @@ public class OmdbConnection {
         url = url + "&i=tt"+String.format("%07d", ID);
     }
 
+    public String generateURL(String a) {
+        String url= "https://www.omdbapi.com/?apikey="+apiKey;
+        Random random = new Random();
+        int ID = random.nextInt(1500000);
+        url = url + "&i=tt"+String.format("%07d", ID);
+        return url;
+    }
+
     public void HTTPCall() throws InterruptedException, ProxyBlockException{
         try {
 

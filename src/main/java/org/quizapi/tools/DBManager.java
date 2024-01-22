@@ -26,19 +26,21 @@ public class DBManager {
                 "TIMESTAMP_SUBSCRIPTION varchar, " +
                 "TIMESTAMP_LAST_UPDATED varchar)";
 
-        //url += (db + filepath);
         String url = initURLString() + db + filepath;
 
         if (!doesThisFileExist(filepath)) {
             try (Connection conn = DriverManager.getConnection(url)) {
                 try {
                     if (conn != null) {
+                        PreparedStatement ps = conn.prepareStatement(sql);
                         DatabaseMetaData meta = conn.getMetaData();
                         System.out.println("The driver name is " + meta.getDriverName());
                         System.out.println("A new database has been created.");
-                        Statement stmt = conn.createStatement();
-                        stmt.execute(sql);
+                        //Statement stmt = conn.createStatement();
+                        //stmt.execute(sql);
+                        ps.execute();
                         System.out.println("New table created");
+                        ps.close();
                     }
 
                 } catch (Exception e) {
@@ -81,4 +83,46 @@ public class DBManager {
         }
 
     }
+
+    public void alterTable(String sql, String db, String filepath){
+        String url = initURLString() + db + filepath;
+        try (Connection conn = DriverManager.getConnection(url)){
+            try{
+                PreparedStatement ps = conn.prepareStatement(sql);
+                DatabaseMetaData meta = conn.getMetaData();
+                ps.execute();
+                ps.close();
+                System.out.println("Feito. Favor conferir tabela e alterar parâmetros nas queries.");
+                closeConnection(conn);
+
+            }catch(Exception e){
+                System.out.println("DBManager.alterTable(): "+ e.getMessage());
+                closeConnection(conn);
+            }
+        }catch (Exception ex){
+            System.out.println("DBManager.alterTable(): "+ ex.getMessage());
+        }
+    }
 }
+
+//quando mudarmos o BD de sqlite para outro,
+//precisaremos utilizar o Hikari para gerenciar o pool de conexões
+//    private HikariDataSource createDataSource() {
+//        HikariConfig config = new HikariConfig();
+//        config.setJdbcUrl("jdbc:mysql://localhost:3306/byte_bank");
+//        config.setUsername("root");
+//        config.setPassword("root");
+//        config.setMaximumPoolSize(10);
+//
+//        return new HikariDataSource(config);
+//    }
+
+//    public Connection getConexao() {
+//        try {
+//            return createDataSource().getConnection();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+// alura.com.br/course/java-jdbc-banco-dados/task/124479

@@ -17,7 +17,6 @@ public class PlayerDAO {
         this.conn = DBManager.getConnection();
     }
 
-
     public void insert(@NotNull Player player) {
 
         String sql = "INSERT INTO players (ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED) " +
@@ -36,11 +35,10 @@ public class PlayerDAO {
             ps.setString(5, String.valueOf(player.getTimestampLastUpdate()));
             ps.execute();
             ps.close();
-
-            System.out.println("Jogador persistido: " + player.toJson());
+            System.out.println("[PlayerDAO insert()]: Jogador inserido com sucesso");
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("[PlayerDAO insert()]" + e.getMessage());
         } finally {
             DBManager.closeConnection(conn);
         }
@@ -56,8 +54,6 @@ public class PlayerDAO {
             resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
-
-                //validar ordem da busca abaixo
                 String id = resultSet.getString(1);
                 String name = resultSet.getString(2);
                 int score = resultSet.getInt(3);
@@ -71,15 +67,14 @@ public class PlayerDAO {
             resultSet.close();
             ps.close();
 
-            System.out.println("tolist" + players);
-
             if (players.isEmpty()) {
+                System.out.println("[PlayerDAO toList()] NotFoundException");
+                DBManager.closeConnection(conn);
                 throw new NotFoundIDException();
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
             DBManager.closeConnection(conn);
+            System.out.println("[PlayerDAO toList()] "+e.getMessage());
         }
         return players;
     }
@@ -89,7 +84,8 @@ public class PlayerDAO {
         this.conn = DBManager.getConnection();
         if(gotPlayer.isEmpty())
         {
-            System.out.println("NotFoundException");
+            System.out.println("[PlayerDAO update()] NotFoundException");
+            DBManager.closeConnection(conn);
             throw new NotFoundIDException();
         }
         else{
@@ -132,7 +128,7 @@ public class PlayerDAO {
             return player;
 
         } catch (SQLException e) {
-            System.out.println("[selectByName]" + e);
+            System.out.println("[PlayerDAO selectById()]" + e);
             DBManager.closeConnection(conn);
             return null;
         }
@@ -150,11 +146,9 @@ public class PlayerDAO {
             ps.executeUpdate();
             ps.close();
             DBManager.closeConnection(conn);
-            //return "{\"response\": \"Jogador excluido com sucesso\"}";
         } catch(Exception e){
             DBManager.closeConnection(conn);
-            System.out.println("[delete] " + e.getMessage());
-            //return "{\"response\": \"Jogador não encontrado\"}";
+            System.out.println("[PlayerDAO delete()]" + e.getMessage());
         }
     }
 }
