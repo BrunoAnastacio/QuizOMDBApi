@@ -9,29 +9,29 @@ public class playerServiceTests {
     public static void main(String[] args) {
         PlayerService ps = new PlayerService();
         Player p = new Player("Oliveira", 66);
-        //test_delete(ps, 5);
+        //test_delete(ps, 555);
         //test_insert(ps, p);
-        //test_searchById(ps,20);
+        //test_searchById(ps,200);
         //test_toList(ps);
-        test_update(ps,55,88);
+        //test_update(ps,2,31);
     }
 
     public static void test_delete(PlayerService ps, int id){
         ps.deleteById(id);
         //test id existe ok
-        //test id não existe NUllPointerException
+        //test id não existe ok
     }
 
     public static void test_insert(PlayerService ps, Player p ){
         ps.insert(p);
         //nome que não existe ok
-        //trava para nome que ja existe = implementar
+        //trava para nome que ja existe ok
     }
 
-    public static void test_searchById(PlayerService ps, int id){
+    public static void test_searchById(PlayerService ps, int id) {
         System.out.println(ps.getById(id).toJson());
         //test id existe ok
-        //test id não existe NUllPointerException
+        //test id não existe ok
     }
 
     public static void test_toList(PlayerService ps){
@@ -47,7 +47,7 @@ public class playerServiceTests {
         // test atualização maior ok
         //test atualização menor ok
         //test atualização igual ok
-        //test atualização item que não existe
+        //test atualização item que não existe ok
     }
 
 

@@ -15,9 +15,7 @@ public class PlayerDAO {
 
     public PlayerDAO (){ //entity manager vem de fora
         em = JPAUtil.getEntityManager();
-        System.out.println("Construindo PlayerDAO");
-        System.out.println(em.toString());
-        System.out.println("PlayerDAO Construido");
+        System.out.println("PlayerDAO Construido. " + em.toString());
     }
 
     public String getEmStatus(){
@@ -25,7 +23,7 @@ public class PlayerDAO {
     }
 
     public void insert(Player player) throws NotFoundIDException, ThisNameAlreadyExistsException {
-        if(thisNameExists(player.getName())) {
+        if(!thisNameExists(player.getName())) {
             try {
                 this.em.getTransaction().begin();
                 this.em.persist(player);
@@ -44,17 +42,17 @@ public class PlayerDAO {
         }
     }
 
-    public void update(int id, int score) throws NotFoundIDException {
-        Long newId = (long)id;
-        Player player = this.em.find(Player.class, newId);
+    public void update(Player p) throws NotFoundIDException {
+        //Long newId = (long)id;
+        Player player = this.em.find(Player.class, p.getId());
         try{
             this.em.getTransaction().begin();
-            if(score > player.getScore()){
+            if(p.getScore() > player.getScore()){
                 this.em.merge(
                         new Player(
-                                newId,
+                                p.getId(),
                                 player.getName(),
-                                score,
+                                p.getScore(),
                                 player.getTimestampSubscription(),
                                 new Timestamp(System.currentTimeMillis())));
                 this.em.getTransaction().commit();
@@ -89,39 +87,28 @@ public class PlayerDAO {
         }
     }
 
-    public Player searchById(Long id) throws NotFoundIDException {
+    public Player searchById(Long id) throws Exception {
         try {
             this.em.getTransaction().begin();
             Player player = this.em.find(Player.class, id);
             this.em.close();
+            if (player.isEmpty()) throw new NullPointerException();
             return player;
-        } catch (Exception e) {
+        } catch (NullPointerException n) {
+            if (!em.isOpen()) this.em.close();
+            System.out.println(n.getMessage());
+            throw new NotFoundIDException();
+        } catch (Exception e ){
             if (!em.isOpen()) this.em.close();
             System.out.println(e.getMessage());
-            throw new NotFoundIDException();
+            throw new Exception();
         }
     }
 
-//    public List<Player> toList(){
-//        String jpql = "SELECT p FROM Player p";
-//        return em.createQuery("FROM " + Player.class.getName()).getResultList();
-//                //em.createQuery(jpql, Player.class).getResultList();
-//
-//            //return entityManager.createQuery("FROM " +
-//                    //Cliente.class.getName()).getResultList();
-//    }
-
-    public List<Player> searchByName(String name){
-        String jpql = "SELECT p FROM Player p WHERE p.name = :name";
-        return em.createQuery(jpql, Player.class)
-                .setParameter("name", name)
-                .getResultList();
-    }
-
-   @SuppressWarnings("unchecked")
    public List <Player> toList() throws NotFoundIDException {
+        String jpql = "SELECT p FROM Player p ORDER BY p.score DESC";
         try{
-            return em.createQuery("FROM " + Player.class.getName())
+            return em.createQuery(jpql, Player.class)
                     .getResultList();
         } catch (Exception e) {
             if (!em.isOpen()) this.em.close();

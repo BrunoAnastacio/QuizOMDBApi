@@ -23,15 +23,17 @@ public class PlayerService {
     @PostMapping(value = "", consumes = "application/json", produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void insert(@RequestBody Player player) {
+        if(player.getName() == null || player.getScore() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         try{
             playerDAO.insert(player);
         } catch (ThisNameAlreadyExistsException t){
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY); //400
+            System.out.println("[PlayerService.insert] :" + t.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST); //400
         } catch(Exception e){
             System.out.println("[PlayerService.insert] :" + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @GetMapping("/")
@@ -48,7 +50,7 @@ public class PlayerService {
     }
 
     @GetMapping("")
-    public Player getById(int id) throws NotFoundIDException {
+    public Player getById(int id){
         try{
             System.out.println(playerDAO.getEmStatus());
             return playerDAO.searchById((long)id);
@@ -59,18 +61,8 @@ public class PlayerService {
         }
     }
 
-//    @GetMapping("/name")
-//    public Player getByName(String name) {
-//        return try {
-//            playerDAO.searchByName(name);
-//        } catch(NotFoundIDException n){
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        } catch(Exception e){
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteById(int id){
         try{
             playerDAO.delete((long)id);
@@ -81,10 +73,12 @@ public class PlayerService {
         }
     }
 
-    @PutMapping("/{id}")
-    public void updateById(int id, int score){
+    @PutMapping("")
+    public void updateById(@RequestBody Player player){
+        if(player.getId() == 0 || player.getScore() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         try{
-            playerDAO.update(id, score);
+            playerDAO.update(player);
         } catch(NotFoundIDException n){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch(Exception e){
