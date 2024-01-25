@@ -5,54 +5,72 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "players")
 public class Player {
+
+    @Column(name = "TIMESTAMP_SUBSCRIPTION")
+    private final Timestamp timestampSubscription;
+
+    @Column(name = "TIMESTAMP_LAST_UPDATED")
+    private Timestamp timestampLastUpdate;
+
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY) //verificar se SQLite tem suporte
+    private Long id;
+
     private String name;
     private int score;
-    private final Timestamp timestampSubscription;
-    private Timestamp timestampLastUpdate;
-    private String id;
 
     public Player(){
         this.timestampSubscription = new Timestamp(System.currentTimeMillis());
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
     }
 
-    //persistencia no BD
+    //persistencia no BD via JDBC
+//    public Player(@NotNull String name, int score, Timestamp timestampSubscription){
+//        this.name = name;
+//        this.score = score;
+//        this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
+//        this.timestampSubscription = timestampSubscription;
+//        this.id = (long) name.hashCode();
+//    }
+
     public Player(@NotNull String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
         this.timestampSubscription = timestampSubscription;
-        this.id = String.valueOf(name.hashCode());
+        //this.id = 0;
     }
 
     //busca
-    public Player(String id, String name, int score, Timestamp timestampSubscription, Timestamp timestampLastUpdate) {
+    public Player(Long id, String name, int score, Timestamp timestampSubscription, Timestamp timestampLastUpdate) {
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = timestampLastUpdate;
         this.timestampSubscription = timestampSubscription;
-        this.id = id;
+        this.id = (long) id;
     }
 
-    //update no BD
+    //update no BD via JDBC
     public Player(int id, String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
         this.timestampSubscription = null; //buscar no BD
-        this.id = String.valueOf(id);
+        this.id = (long) id;
     }
 
     //delete no BD
     public Player(String name){
         this.name = name;
-//        this.score = score;
-       this.timestampLastUpdate = null; //buscar no bd
+        this.timestampLastUpdate = null; //buscar no bd
         this.timestampSubscription = null; //buscar no bd
-//        this.id = id;
+
     }
 
     //recebendo a requisição post
@@ -61,10 +79,17 @@ public class Player {
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
         this.timestampSubscription = new Timestamp(System.currentTimeMillis());
-        this.id = String.valueOf(name.hashCode());
     }
 
-    public String getId(){
+    //update via JPA
+    public Player (Long id, int score){
+        this.id = id;
+        this.score = score;
+        this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
+        this.timestampSubscription = null;
+    }
+
+    public Long getId(){
         return id;
     }
 
@@ -111,7 +136,4 @@ public class Player {
         return gson.toJson(this);
         //System.out.println(name.hashCode());
     }
-
-
-
 }

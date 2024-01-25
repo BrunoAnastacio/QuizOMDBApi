@@ -1,158 +1,148 @@
 package org.quizapi.models.daos;
 
-import org.jetbrains.annotations.NotNull;
 import org.quizapi.exceptions.NotFoundIDException;
+import org.quizapi.exceptions.ThisNameAlreadyExistsException;
 import org.quizapi.models.beans.Player;
-import org.quizapi.tools.DBManager;
+import org.quizapi.util.JPAUtil;
 
-import java.sql.*;
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import java.sql.Timestamp;
 import java.util.List;
 
-
 public class PlayerDAO {
-    Connection conn;
 
-    public PlayerDAO() {
-        this.conn = DBManager.getConnection();
+    private final EntityManager em;
+
+    public PlayerDAO (){ //entity manager vem de fora
+        em = JPAUtil.getEntityManager();
+        System.out.println("Construindo PlayerDAO");
+        System.out.println(em.toString());
+        System.out.println("PlayerDAO Construido");
     }
 
-    public void insert(@NotNull Player player) {
-
-        String sql = "INSERT INTO players (ID, NAME, SCORE, TIMESTAMP_SUBSCRIPTION, TIMESTAMP_LAST_UPDATED) " +
-                "VALUES (?, ?, ?, ?, ?) " +
-                "ON CONFLICT (ID) DO UPDATE " +
-                "SET SCORE = EXCLUDED.SCORE, " +
-                "TIMESTAMP_LAST_UPDATED = EXCLUDED.TIMESTAMP_LAST_UPDATED";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setString(1, player.getId());
-            ps.setString(2, player.getName());
-            ps.setInt(3, player.getScore());
-            ps.setString(4, String.valueOf(player.getTimestampSubscription()));
-            ps.setString(5, String.valueOf(player.getTimestampLastUpdate()));
-            ps.execute();
-            ps.close();
-            System.out.println("[PlayerDAO insert()]: Jogador inserido com sucesso");
-
-        } catch (SQLException e) {
-            System.out.println("[PlayerDAO insert()]" + e.getMessage());
-        } finally {
-            DBManager.closeConnection(conn);
-        }
+    public String getEmStatus(){
+        return em.toString();
     }
 
-    public List<String> toList() throws NotFoundIDException {
-        ResultSet resultSet;
-        List<String> players = new ArrayList<>();
-        String sql = "SELECT * FROM players ORDER BY score DESC";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            resultSet = ps.executeQuery();
-
-            while (resultSet.next()) {
-                String id = resultSet.getString(1);
-                String name = resultSet.getString(2);
-                int score = resultSet.getInt(3);
-                Timestamp timestampSubscription = resultSet.getTimestamp(4);
-                Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
-
-                Player player = new Player(id, name, score, timestampSubscription, timestampLastUpdate);
-                players.add(player.toJson());
-            }
-
-            resultSet.close();
-            ps.close();
-
-            if (players.isEmpty()) {
-                System.out.println("[PlayerDAO toList()] NotFoundException");
-                DBManager.closeConnection(conn);
+    public void insert(Player player) throws NotFoundIDException, ThisNameAlreadyExistsException {
+        if(thisNameExists(player.getName())) {
+            try {
+                this.em.getTransaction().begin();
+                this.em.persist(player);
+                this.em.getTransaction().commit();
+                this.em.close();
+            } catch (Exception e) {
+                if (!em.isOpen()) {
+                    this.em.getTransaction().rollback();
+                    this.em.close();
+                }
+                System.out.println(e.getMessage());
                 throw new NotFoundIDException();
             }
-        } catch (SQLException e) {
-            DBManager.closeConnection(conn);
-            System.out.println("[PlayerDAO toList()] "+e.getMessage());
+        } else{
+            throw new ThisNameAlreadyExistsException();
         }
-        return players;
     }
 
-   public Player update(int id, Player toUpdate) throws NotFoundIDException {
-        Player gotPlayer = selectById(id);
-        this.conn = DBManager.getConnection();
-        if(gotPlayer.isEmpty())
-        {
-            System.out.println("[PlayerDAO update()] NotFoundException");
-            DBManager.closeConnection(conn);
+    public void update(int id, int score) throws NotFoundIDException {
+        Long newId = (long)id;
+        Player player = this.em.find(Player.class, newId);
+        try{
+            this.em.getTransaction().begin();
+            if(score > player.getScore()){
+                this.em.merge(
+                        new Player(
+                                newId,
+                                player.getName(),
+                                score,
+                                player.getTimestampSubscription(),
+                                new Timestamp(System.currentTimeMillis())));
+                this.em.getTransaction().commit();
+                this.em.close();
+            }else{
+                this.em.close();
+            }
+        } catch(Exception e){
+            if(!em.isOpen()){
+                this.em.getTransaction().rollback();
+                this.em.close();
+            }
+            System.out.println(e.getMessage());
             throw new NotFoundIDException();
         }
-        else{
-            //criar um player pra inserir no banco
-            Player updatedPlayer = new Player(
-                    gotPlayer.getId(),
-                    gotPlayer.getName(),
-                    toUpdate.getScore(),
-                    gotPlayer.getTimestampSubscription(),
-                    new Timestamp(System.currentTimeMillis())
-                );
-            System.out.println(updatedPlayer);
-            insert(updatedPlayer);
-            DBManager.closeConnection(conn);
-            return updatedPlayer;
+    }
+
+    public void delete(Long id) throws NotFoundIDException {
+        try {
+            this.em.getTransaction().begin();
+            Player player = this.em.find(Player.class, id);
+            this.em.remove(player);
+            this.em.getTransaction().commit();
+            this.em.close();
+        }catch(Exception e){
+            if(!em.isOpen()){
+                this.em.getTransaction().rollback();
+                this.em.close();
+            }
+            System.out.println(e.getMessage());
+            throw new NotFoundIDException();
+        }
+    }
+
+    public Player searchById(Long id) throws NotFoundIDException {
+        try {
+            this.em.getTransaction().begin();
+            Player player = this.em.find(Player.class, id);
+            this.em.close();
+            return player;
+        } catch (Exception e) {
+            if (!em.isOpen()) this.em.close();
+            System.out.println(e.getMessage());
+            throw new NotFoundIDException();
+        }
+    }
+
+//    public List<Player> toList(){
+//        String jpql = "SELECT p FROM Player p";
+//        return em.createQuery("FROM " + Player.class.getName()).getResultList();
+//                //em.createQuery(jpql, Player.class).getResultList();
+//
+//            //return entityManager.createQuery("FROM " +
+//                    //Cliente.class.getName()).getResultList();
+//    }
+
+    public List<Player> searchByName(String name){
+        String jpql = "SELECT p FROM Player p WHERE p.name = :name";
+        return em.createQuery(jpql, Player.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+   @SuppressWarnings("unchecked")
+   public List <Player> toList() throws NotFoundIDException {
+        try{
+            return em.createQuery("FROM " + Player.class.getName())
+                    .getResultList();
+        } catch (Exception e) {
+            if (!em.isOpen()) this.em.close();
+            System.out.println(e.getMessage());
+            throw new NotFoundIDException();
         }
    }
 
-    public Player selectById(int id) {
-        String sql = "SELECT * FROM PLAYERS WHERE ID = ?";
-        PreparedStatement ps;
-        Player player;
-
-        try {
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1,id);
-            ResultSet resultSet = ps.executeQuery();
-
-            String id_response = resultSet.getString(1);
-            String name = resultSet.getString(2);
-            int score = resultSet.getInt(3);
-            Timestamp timestampSubscription = resultSet.getTimestamp(4);
-            Timestamp timestampLastUpdate = resultSet.getTimestamp(5);
-
-            player = new Player(id_response, name, score, timestampSubscription, timestampLastUpdate);
-
-            resultSet.close();
-            ps.close();
-            DBManager.closeConnection(conn);
-            return player;
-
-        } catch (SQLException e) {
-            System.out.println("[PlayerDAO selectById()]" + e);
-            DBManager.closeConnection(conn);
-            return null;
-        }
-    }
-
-    public void delete(int id) {
-
+   private boolean thisNameExists(String name) throws NotFoundIDException {
         try{
-            //Player gotPlayer = selectById(id);
-            this.conn = DBManager.getConnection();
-            String sql = "DELETE FROM players WHERE id = ?";
-            PreparedStatement ps;
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            ps.close();
-            DBManager.closeConnection(conn);
-        } catch(Exception e){
-            DBManager.closeConnection(conn);
-            System.out.println("[PlayerDAO delete()]" + e.getMessage());
+            String jpql = "SELECT p FROM Player p WHERE p.name = :name";
+            List <Player> l = em.createQuery(jpql, Player.class)
+                    .setParameter("name", name)
+                    .getResultList();
+            return !l.isEmpty();
+        } catch (Exception e) {
+            if (!em.isOpen()) this.em.close();
+            System.out.println(e.getMessage());
+            throw new NotFoundIDException();
         }
-    }
+   }
 }
-
-
 
 

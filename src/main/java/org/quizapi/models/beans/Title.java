@@ -1,7 +1,7 @@
 package org.quizapi.models.beans;
 
 import org.quizapi.connections.OmdbConnection;
-import org.quizapi.tools.GameManager;
+import org.quizapi.util.GameManager;
 
 public class Title {
 

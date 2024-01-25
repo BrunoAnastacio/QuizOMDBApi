@@ -2,7 +2,7 @@ package org.quizapi.view;
 
 import org.quizapi.controllers.springless.PlayerSpringlessController;
 import org.quizapi.models.beans.Question;
-import org.quizapi.tools.GameManager;
+import org.quizapi.util.GameManager;
 
 import java.io.IOException;
 import java.util.ArrayList;

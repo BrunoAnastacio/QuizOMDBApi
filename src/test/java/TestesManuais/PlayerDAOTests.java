@@ -1,15 +1,5 @@
 package TestesManuais;
 
-import org.quizapi.App;
-import org.quizapi.models.beans.Player;
-import org.quizapi.models.daos.PlayerDAO;
-import org.quizapi.tools.AvaliableDBs;
-import org.quizapi.tools.DBManager;
-
-import java.sql.Connection;
-import java.sql.Timestamp;
-import java.util.List;
-
 
 public class PlayerDAOTests {
 

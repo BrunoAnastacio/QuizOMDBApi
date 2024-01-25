@@ -2,9 +2,6 @@ package TestesManuais;
 
 import org.quizapi.connections.OmdbConnection;
 import org.quizapi.controllers.springless.PlayerSpringlessController;
-import org.quizapi.tools.DBManager;
-
-import java.sql.Connection;
 
 public class TestesManuais {
 

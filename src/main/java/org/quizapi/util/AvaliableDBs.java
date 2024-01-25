@@ -1,4 +1,4 @@
-package org.quizapi.tools;
+package org.quizapi.util;
 
 public enum AvaliableDBs {
     SQLITE("sqlite:"),

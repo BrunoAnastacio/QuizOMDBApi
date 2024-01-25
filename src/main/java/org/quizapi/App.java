@@ -1,7 +1,7 @@
 package org.quizapi;
 
-import static org.quizapi.tools.AvaliableDBs.SQLITE;
-import static org.quizapi.tools.DBManager.*;
+import static org.quizapi.util.AvaliableDBs.SQLITE;
+import static org.quizapi.util.DBManager.*;
 
 public class App {
 

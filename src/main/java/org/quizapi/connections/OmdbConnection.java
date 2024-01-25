@@ -8,7 +8,7 @@ import com.google.gson.JsonSyntaxException;
 import org.quizapi.exceptions.ProxyBlockException;
 import org.quizapi.models.beans.OmdbTitle;
 import org.quizapi.models.beans.Title;
-import org.quizapi.tools.GameManager;
+import org.quizapi.util.GameManager;
 
 import java.io.IOException;
 import java.net.URI;
