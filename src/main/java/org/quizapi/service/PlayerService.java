@@ -1,9 +1,9 @@
-package org.quizapi.services;
+package org.quizapi.service;
 
-import org.quizapi.exceptions.NotFoundIDException;
-import org.quizapi.exceptions.ThisNameAlreadyExistsException;
-import org.quizapi.models.beans.Player;
-import org.quizapi.models.daos.PlayerDAO;
+import org.quizapi.util.exceptions.NotFoundIDException;
+import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
+import org.quizapi.domain.player.Player;
+import org.quizapi.domain.player.PlayerDAO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

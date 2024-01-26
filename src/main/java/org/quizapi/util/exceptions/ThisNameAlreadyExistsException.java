@@ -1,4 +1,4 @@
-package org.quizapi.exceptions;
+package org.quizapi.util.exceptions;
 
 public class ThisNameAlreadyExistsException extends Exception{
     public ThisNameAlreadyExistsException(){

@@ -1,7 +1,8 @@
-package org.quizapi.models.beans;
+package org.quizapi.domain.question;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.quizapi.domain.title.Title;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,7 @@ public class Question {
         }
 
         Collections.shuffle(options);
-        System.out.println("Questão criada");
+        //System.out.println("Questão criada");
 
     }
 

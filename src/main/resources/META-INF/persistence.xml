@@ -18,7 +18,7 @@
 
         </properties>
 
-        <!--class>org.quizapi.models.beans.Player</class-->
+        <!--class>org.quizapi.domain.player.Player</class-->
 
     </persistence-unit>
 

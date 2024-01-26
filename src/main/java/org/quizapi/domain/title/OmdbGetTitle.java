@@ -1,13 +1,13 @@
-package org.quizapi.connections;
+package org.quizapi.domain.title;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import org.quizapi.exceptions.ProxyBlockException;
-import org.quizapi.models.beans.OmdbTitle;
-import org.quizapi.models.beans.Title;
+import org.quizapi.util.exceptions.ProxyBlockException;
+import org.quizapi.domain.title.TitleRecord;
+import org.quizapi.domain.title.Title;
 import org.quizapi.util.GameManager;
 
 import java.io.IOException;
@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class OmdbConnection {
+public class OmdbGetTitle {
     private final String apiKey = System.getenv("API_KEY");
     private String url= "https://www.omdbapi.com/?apikey="+apiKey;
     private String json;
     private Title titulo;
     private final List<String> fakeJson = new ArrayList<>();
-    //private Cache cache = new Cache();
+
 
     public void fillFakeJson(){
         fakeJson.add("{\"Title\":\"Venus Boy\",\"Year\":\"2001\",\"Rated\":\"N/A\",\"Released\":\"17 Nov 2001\",\"Runtime\":\"10 min\",\"Genre\":\"Short\",\"Director\":\"Arturo Castelán\",\"Writer\":\"N/A\",\"Actors\":\"N/A\",\"Plot\":\"One latino wistfully looks back at a pivotal sexual encounter.\",\"Language\":\"Spanish\",\"Country\":\"Mexico\",\"Awards\":\"N/A\",\"Poster\":\"N/A\",\"Ratings\":[],\"Metascore\":\"N/A\",\"imdbRating\":\"N/A\",\"imdbVotes\":\"N/A\",\"imdbID\":\"tt0409434\",\"Type\":\"movie\",\"DVD\":\"N/A\",\"BoxOffice\":\"N/A\",\"Production\":\"N/A\",\"Website\":\"N/A\",\"Response\":\"True\"}");
@@ -109,14 +109,11 @@ public class OmdbConnection {
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .setPrettyPrinting()
                     .create();
-            OmdbTitle meuTituloOmdb = gson.fromJson(json, OmdbTitle.class);
+            TitleRecord meuTituloOmdb = gson.fromJson(json, TitleRecord.class);
             titulo = new Title(meuTituloOmdb);
 
-        }catch(JsonSyntaxException exception){
-            System.out.println("Erro de JSON");
-            System.out.println(json);
-        }catch(NullPointerException exception){
-            System.out.println(exception.getMessage());
+        }catch(JsonSyntaxException | NullPointerException exception){
+            System.out.println("[OmdbGetTitle]" + exception.getMessage());
         }
     }
 
@@ -125,14 +122,14 @@ public class OmdbConnection {
     }
 
 
-    public OmdbConnection() throws InterruptedException{
+    public OmdbGetTitle() throws InterruptedException{
         try{
             externalDataCall();
         }catch (ProxyBlockException p){
+            //System.out.println("[OmdbGetTitle]" + p.getMessage());
             internalDataCall();
         } finally{
             deserialize();
-            System.out.println(json + url);
         }
     }
 
@@ -144,7 +141,7 @@ public class OmdbConnection {
         }catch (Exception e){
             int i;
             for (i = 0; i<5;i++){
-                System.out.println("Tentativa " + i+1 + " de 5. Requisição sem sucesso");
+                //System.out.println("Tentativa " + i+1 + " de 05. Requisição sem sucesso");
                 HTTPCall();
             }
             System.out.println("Tentativa de contato com OMDB sem sucesso. Utilizando base de dados interna");

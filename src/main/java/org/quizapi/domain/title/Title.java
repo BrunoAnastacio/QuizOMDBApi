@@ -1,6 +1,5 @@
-package org.quizapi.models.beans;
+package org.quizapi.domain.title;
 
-import org.quizapi.connections.OmdbConnection;
 import org.quizapi.util.GameManager;
 
 public class Title {
@@ -10,7 +9,7 @@ public class Title {
     private String imdbID;
     private String error;
 
-    public Title(OmdbTitle meuTituloOmdb){
+    public Title(TitleRecord meuTituloOmdb){
         this.name = meuTituloOmdb.Title();
         this.plot = meuTituloOmdb.Plot();
         this.imdbID = meuTituloOmdb.imdbID();
@@ -23,7 +22,7 @@ public class Title {
 
         if (plotValidation){
             do{
-                OmdbConnection connection = new OmdbConnection();
+                OmdbGetTitle connection = new OmdbGetTitle();
                 this.name = connection.searchTitlePerId().getName();
                 this.plot = connection.searchTitlePerId().getPlot();
                 if(this.plot == null) this.plot = "N/A";
@@ -36,7 +35,7 @@ public class Title {
 
         }else{
             do{
-                OmdbConnection connection = new OmdbConnection();
+                OmdbGetTitle connection = new OmdbGetTitle();
                 this.name = connection.searchTitlePerId().getName();
                 this.plot = connection.searchTitlePerId().getPlot();
                 if(this.plot == null) this.plot = "N/A";
@@ -49,7 +48,7 @@ public class Title {
         }
 
         GameManager.addInCacheTitle(this.imdbID);
-        System.out.println("Titulo criado");
+        //System.out.println("Titulo criado");
 
     }
 

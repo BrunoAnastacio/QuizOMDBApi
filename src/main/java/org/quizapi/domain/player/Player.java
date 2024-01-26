@@ -1,5 +1,5 @@
 
-package org.quizapi.models.beans;
+package org.quizapi.domain.player;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

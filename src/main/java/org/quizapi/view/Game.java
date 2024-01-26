@@ -1,7 +1,7 @@
 package org.quizapi.view;
 
-import org.quizapi.controllers.springless.PlayerSpringlessController;
-import org.quizapi.models.beans.Question;
+import org.quizapi.service.springless.PlayerSpringlessController;
+import org.quizapi.domain.question.Question;
 import org.quizapi.util.GameManager;
 
 import java.io.IOException;
@@ -28,6 +28,7 @@ public class Game {
                 List<Object> opcoes = new ArrayList<>();
                 Question q = new Question();
                 //System.out.println("qcd");
+                System.out.println("Carregando questão...");
                 System.out.println(q.toJson());
                 System.out.println(GameManager.getStatus());
                 System.out.println(GameManager.getCountRequests() - 5 + " tentativas excedentes de requisições realizadas.");
@@ -78,6 +79,8 @@ public class Game {
 
         } catch (InputMismatchException e){
             System.out.println("Vc abdicou do jogo. Tchau!");
+        } catch (Exception e){
+            System.out.println("[Game]" + e.getMessage());
         }
 
 

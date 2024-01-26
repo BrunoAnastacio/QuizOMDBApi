@@ -1,7 +1,7 @@
 package TestesManuais;
 
-import org.quizapi.models.beans.Player;
-import org.quizapi.services.PlayerService;
+import org.quizapi.domain.player.Player;
+import org.quizapi.service.PlayerService;
 import java.util.List;
 
 public class playerServiceTests {

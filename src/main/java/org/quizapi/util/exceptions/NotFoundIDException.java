@@ -1,4 +1,4 @@
-package org.quizapi.exceptions;
+package org.quizapi.util.exceptions;
 
 public class NotFoundIDException extends Exception{
     public NotFoundIDException(){

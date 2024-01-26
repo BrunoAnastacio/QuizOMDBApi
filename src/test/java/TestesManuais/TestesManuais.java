@@ -1,7 +1,7 @@
 package TestesManuais;
 
-import org.quizapi.connections.OmdbConnection;
-import org.quizapi.controllers.springless.PlayerSpringlessController;
+import org.quizapi.domain.title.OmdbGetTitle;
+import org.quizapi.service.springless.PlayerSpringlessController;
 
 public class TestesManuais {
 
@@ -19,7 +19,7 @@ public class TestesManuais {
     }
 
     static void testGenerateURL() throws InterruptedException {
-        OmdbConnection conn = new OmdbConnection();
+        OmdbGetTitle conn = new OmdbGetTitle();
         String url = conn.generateURL("");
         url += "&type=movie";
         System.out.println(url);

@@ -1,8 +1,7 @@
-package org.quizapi.models.daos;
+package org.quizapi.domain.player;
 
-import org.quizapi.exceptions.NotFoundIDException;
-import org.quizapi.exceptions.ThisNameAlreadyExistsException;
-import org.quizapi.models.beans.Player;
+import org.quizapi.util.exceptions.NotFoundIDException;
+import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
 import org.quizapi.util.JPAUtil;
 
 import javax.persistence.EntityManager;
@@ -120,10 +119,10 @@ public class PlayerDAO {
    private boolean thisNameExists(String name) throws NotFoundIDException {
         try{
             String jpql = "SELECT p FROM Player p WHERE p.name = :name";
-            List <Player> l = em.createQuery(jpql, Player.class)
+            List <Player> list = em.createQuery(jpql, Player.class)
                     .setParameter("name", name)
                     .getResultList();
-            return !l.isEmpty();
+            return !list.isEmpty();
         } catch (Exception e) {
             if (!em.isOpen()) this.em.close();
             System.out.println(e.getMessage());
