@@ -1,5 +1,6 @@
 package org.quizapi.view;
 
+import org.quizapi.dto.InsertDto;
 import org.quizapi.service.springless.PlayerSpringlessController;
 import org.quizapi.domain.question.Question;
 import org.quizapi.util.GameManager;
@@ -73,7 +74,8 @@ public class Game {
             } while (stars > 0);
 
             System.out.println("Respostas Corretas: " + score);
-            PlayerSpringlessController player = new PlayerSpringlessController(nome, score);
+            PlayerSpringlessController player =
+                    new PlayerSpringlessController(new InsertDto(nome, score));
             System.out.println(player.toString());
             //chamar ranking
 

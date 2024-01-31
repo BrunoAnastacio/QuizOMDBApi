@@ -6,8 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import org.quizapi.util.exceptions.ProxyBlockException;
-import org.quizapi.domain.title.TitleRecord;
-import org.quizapi.domain.title.Title;
+import org.quizapi.dto.OmdbGetTitleDto;
 import org.quizapi.util.GameManager;
 
 import java.io.IOException;
@@ -109,7 +108,7 @@ public class OmdbGetTitle {
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .setPrettyPrinting()
                     .create();
-            TitleRecord meuTituloOmdb = gson.fromJson(json, TitleRecord.class);
+            OmdbGetTitleDto meuTituloOmdb = gson.fromJson(json, OmdbGetTitleDto.class);
             titulo = new Title(meuTituloOmdb);
 
         }catch(JsonSyntaxException | NullPointerException exception){

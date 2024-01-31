@@ -1,5 +1,9 @@
 package org.quizapi.service;
 
+import org.quizapi.dto.DeleteDto;
+import org.quizapi.dto.GetByIdDto;
+import org.quizapi.dto.InsertDto;
+import org.quizapi.dto.UpdateDto;
 import org.quizapi.util.exceptions.NotFoundIDException;
 import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
 import org.quizapi.domain.player.Player;
@@ -22,9 +26,7 @@ public class PlayerService {
 
     @PostMapping(value = "", consumes = "application/json", produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void insert(@RequestBody Player player) {
-        if(player.getName() == null || player.getScore() == 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public void insert(@RequestBody InsertDto player) {
         try{
             playerDAO.insert(player);
         } catch (ThisNameAlreadyExistsException t){
@@ -50,10 +52,9 @@ public class PlayerService {
     }
 
     @GetMapping("")
-    public Player getById(int id){
+    public Player getById(GetByIdDto player){
         try{
-            //System.out.println(playerDAO.getEmStatus());
-            return playerDAO.searchById((long)id);
+            return playerDAO.searchById((long)player.id());
         } catch(NotFoundIDException n){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch(Exception e){
@@ -63,9 +64,9 @@ public class PlayerService {
 
     @DeleteMapping("")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteById(int id){
+    public void deleteById(DeleteDto player){
         try{
-            playerDAO.delete((long)id);
+            playerDAO.delete((long)player.id());
         } catch(NotFoundIDException n){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch(Exception e){
@@ -74,8 +75,8 @@ public class PlayerService {
     }
 
     @PutMapping("")
-    public void updateById(@RequestBody Player player){
-        if(player.getId() == 0 || player.getScore() == 0)
+    public void updateById(@RequestBody UpdateDto player){
+        if(player.id() == 0L || player.score() == 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         try{
             playerDAO.update(player);

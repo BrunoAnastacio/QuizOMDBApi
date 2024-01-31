@@ -1,5 +1,6 @@
 package org.quizapi.domain.title;
 
+import org.quizapi.dto.OmdbGetTitleDto;
 import org.quizapi.util.GameManager;
 
 public class Title {
@@ -9,7 +10,7 @@ public class Title {
     private String imdbID;
     private String error;
 
-    public Title(TitleRecord meuTituloOmdb){
+    public Title(OmdbGetTitleDto meuTituloOmdb){
         this.name = meuTituloOmdb.Title();
         this.plot = meuTituloOmdb.Plot();
         this.imdbID = meuTituloOmdb.imdbID();

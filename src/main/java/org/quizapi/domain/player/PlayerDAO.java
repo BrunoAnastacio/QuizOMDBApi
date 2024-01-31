@@ -1,5 +1,7 @@
 package org.quizapi.domain.player;
 
+import org.quizapi.dto.InsertDto;
+import org.quizapi.dto.UpdateDto;
 import org.quizapi.util.exceptions.NotFoundIDException;
 import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
 import org.quizapi.util.JPAUtil;
@@ -21,9 +23,9 @@ public class PlayerDAO {
         return em.toString();
     }
 
-    public void insert(Player player) throws NotFoundIDException, ThisNameAlreadyExistsException {
+    public void insert(InsertDto player) throws NotFoundIDException, ThisNameAlreadyExistsException {
         ifAintConnectedPleaseConnect();
-        if(!thisNameExists(player.getName())) {
+        if(!thisNameExists(player.name())) {
             try {
                 this.em.getTransaction().begin();
                 this.em.persist(player);
@@ -35,33 +37,30 @@ public class PlayerDAO {
                     this.em.close();
                 }
                 System.out.println(e.getMessage());
-                throw new NotFoundIDException();
+                throw new NotFoundIDException("ID informado não existe");
             }
         } else{
-            throw new ThisNameAlreadyExistsException();
+            throw new ThisNameAlreadyExistsException("Nickname informado já existe");
         }
     }
 
-    public void update(Player newPlayerData) throws NotFoundIDException {
-        //Long newId = (long)id;
+    public void update(UpdateDto playerDto) throws NotFoundIDException {
         ifAintConnectedPleaseConnect();
-        Player player = this.em.find(Player.class, newPlayerData.getId());
+        Player player = this.em.find(Player.class, playerDto.id());
         try{
             this.em.getTransaction().begin();
-            if(newPlayerData.getScore() > player.getScore()){
+            if(playerDto.score() > player.getScore()){
                 this.em.merge(
                         new Player(
-                                newPlayerData.getId(),
+                                playerDto.id(),
                                 player.getName(),
-                                newPlayerData.getScore(),
+                                playerDto.score(),
                                 player.getTimestampSubscription(),
                                 new Timestamp(System.currentTimeMillis())));
                 this.em.getTransaction().commit();
                 this.em.close();
-
             }else{
                 this.em.close();
-
             }
         } catch(Exception e){
             try{

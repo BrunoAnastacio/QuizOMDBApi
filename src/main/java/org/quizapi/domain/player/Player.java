@@ -30,15 +30,6 @@ public class Player {
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
     }
 
-    //persistencia no BD via JDBC
-//    public Player(@NotNull String name, int score, Timestamp timestampSubscription){
-//        this.name = name;
-//        this.score = score;
-//        this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
-//        this.timestampSubscription = timestampSubscription;
-//        this.id = (long) name.hashCode();
-//    }
-
     public Player(@NotNull String name, int score, Timestamp timestampSubscription){
         this.name = name;
         this.score = score;
