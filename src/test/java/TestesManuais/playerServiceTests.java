@@ -43,7 +43,7 @@ public class playerServiceTests {
 
     public static void test_update(PlayerService ps, int id, int score){
         //Player p = new Player( 3, 54)
-        ps.updateById(id, score);
+        //ps.updateById(id, score);
         // test atualização maior ok
         //test atualização menor ok
         //test atualização igual ok

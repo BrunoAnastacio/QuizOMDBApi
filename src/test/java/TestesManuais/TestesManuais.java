@@ -2,6 +2,8 @@ package TestesManuais;
 
 import org.quizapi.domain.title.OmdbGetTitle;
 import org.quizapi.service.springless.PlayerSpringlessController;
+import org.quizapi.util.exceptions.NotFoundIDException;
+import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
 
 public class TestesManuais {
 
@@ -12,7 +14,7 @@ public class TestesManuais {
 
     }
 
-    static void testSpringlessController(){
+    static void testSpringlessController() throws ThisNameAlreadyExistsException, NotFoundIDException {
         String nome = "Eustaqio";
         int score = 3;
         PlayerSpringlessController player = new PlayerSpringlessController(nome, score);

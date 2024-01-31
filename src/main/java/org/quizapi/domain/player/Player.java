@@ -74,7 +74,7 @@ public class Player {
     }
 
     //recebendo a requisição post
-    public Player(@NotNull String name, int score){
+    public Player(String name, int score){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());

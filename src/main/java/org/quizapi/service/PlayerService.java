@@ -52,7 +52,7 @@ public class PlayerService {
     @GetMapping("")
     public Player getById(int id){
         try{
-            System.out.println(playerDAO.getEmStatus());
+            //System.out.println(playerDAO.getEmStatus());
             return playerDAO.searchById((long)id);
         } catch(NotFoundIDException n){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -80,8 +80,10 @@ public class PlayerService {
         try{
             playerDAO.update(player);
         } catch(NotFoundIDException n){
+            System.out.println("Erro nfie" + n.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch(Exception e){
+            System.out.println("Erro ise" + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
