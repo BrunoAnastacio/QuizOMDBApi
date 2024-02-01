@@ -16,10 +16,10 @@ public class Player {
     private final Timestamp timestampSubscription;
 
     @Column(name = "TIMESTAMP_LAST_UPDATED")
-    private Timestamp timestampLastUpdate;
+    private final Timestamp timestampLastUpdate;
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY) //verificar se SQLite tem suporte
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -35,7 +35,6 @@ public class Player {
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
         this.timestampSubscription = timestampSubscription;
-        //this.id = 0;
     }
 
     //busca
@@ -44,11 +43,11 @@ public class Player {
         this.score = score;
         this.timestampLastUpdate = timestampLastUpdate;
         this.timestampSubscription = timestampSubscription;
-        this.id = (long) id;
+        this.id = id;
     }
 
     //update no BD via JDBC
-    public Player(int id, String name, int score, Timestamp timestampSubscription){
+    public Player(int id, String name, int score){
         this.name = name;
         this.score = score;
         this.timestampLastUpdate = new Timestamp(System.currentTimeMillis());
@@ -80,19 +79,8 @@ public class Player {
         this.timestampSubscription = null;
     }
 
-    public Long getId(){
-        return id;
-    }
-
     public Timestamp getTimestampSubscription() {
         return timestampSubscription;
-    }
-
-    public Timestamp getTimestampLastUpdate() {
-        return timestampLastUpdate;
-    }
-    public void setTimestampLastUpdate( Timestamp t){
-        this.timestampLastUpdate = t;
     }
 
     public String getName() {
@@ -101,10 +89,6 @@ public class Player {
 
     public int getScore() {
         return score;
-    }
-
-    public void setScore(int score){
-        this.score = score;
     }
 
     public boolean isEmpty(){
@@ -125,6 +109,5 @@ public class Player {
     public String toJson(){
         Gson gson = new GsonBuilder().create();
         return gson.toJson(this);
-        //System.out.println(name.hashCode());
     }
 }

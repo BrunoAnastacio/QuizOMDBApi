@@ -1,4 +1,4 @@
-package org.quizapi.util;
+package org.quizapi.util.persistence;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

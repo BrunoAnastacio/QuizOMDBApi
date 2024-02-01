@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
 @ExtendWith(MockitoExtension.class)
 class DeleteTests {
 
@@ -84,7 +83,6 @@ class InsertTests {
                 () -> ps.insert(player));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }
-
 }
 
 

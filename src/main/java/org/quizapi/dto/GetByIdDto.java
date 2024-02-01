@@ -1,6 +1,6 @@
 package org.quizapi.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record GetByIdDto(@NotBlank int id) {
+public record GetByIdDto(@NotNull int id) {
 }

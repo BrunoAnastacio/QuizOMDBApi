@@ -2,9 +2,10 @@ package org.quizapi.domain.player;
 
 import org.quizapi.dto.InsertDto;
 import org.quizapi.dto.UpdateDto;
+import org.quizapi.util.Validator;
 import org.quizapi.util.exceptions.NotFoundIDException;
 import org.quizapi.util.exceptions.ThisNameAlreadyExistsException;
-import org.quizapi.util.JPAUtil;
+import org.quizapi.util.persistence.JPAUtil;
 
 import javax.persistence.EntityManager;
 import java.sql.Timestamp;
@@ -14,7 +15,7 @@ public class PlayerDAO {
 
     public EntityManager em;
 
-    public PlayerDAO (){ //entity manager vem de fora
+    public PlayerDAO (){
         em = JPAUtil.getEntityManager();
         System.out.println("PlayerDAO Construido. " + em.toString());
     }
@@ -25,22 +26,22 @@ public class PlayerDAO {
 
     public void insert(InsertDto player) throws NotFoundIDException, ThisNameAlreadyExistsException {
         ifAintConnectedPleaseConnect();
-        if(!thisNameExists(player.name())) {
-            try {
+        try{
+            if(Validator.validateThisName(player.name())){
                 this.em.getTransaction().begin();
                 this.em.persist(player);
                 this.em.getTransaction().commit();
                 this.em.close();
-            } catch (Exception e) {
-                if (!em.isOpen()) {
-                    this.em.getTransaction().rollback();
-                    this.em.close();
-                }
-                System.out.println(e.getMessage());
-                throw new NotFoundIDException("ID informado não existe");
             }
-        } else{
+        } catch(NotFoundIDException n){
             throw new ThisNameAlreadyExistsException("Nickname informado já existe");
+        } catch (Exception e) {
+            if (!em.isOpen()) {
+                this.em.getTransaction().rollback();
+                this.em.close();
+            }
+            System.out.println(e.getMessage());
+            throw new NotFoundIDException("ID informado não existe");
         }
     }
 
@@ -49,7 +50,7 @@ public class PlayerDAO {
         Player player = this.em.find(Player.class, playerDto.id());
         try{
             this.em.getTransaction().begin();
-            if(playerDto.score() > player.getScore()){
+            if(Validator.validateFirstScore(playerDto.score(),player.getScore())){
                 this.em.merge(
                         new Player(
                                 playerDto.id(),
@@ -129,22 +130,7 @@ public class PlayerDAO {
         }
    }
 
-   private boolean thisNameExists(String name) throws NotFoundIDException {
-       ifAintConnectedPleaseConnect();
-        try{
-            String jpql = "SELECT p FROM Player p WHERE p.name = :name";
-            List <Player> list = em.createQuery(jpql, Player.class)
-                    .setParameter("name", name)
-                    .getResultList();
-            return !list.isEmpty();
-        } catch (Exception e) {
-            if (!em.isOpen()) this.em.close();
-            System.out.println(e.getMessage());
-            throw new NotFoundIDException();
-        }
-   }
-
-   private void ifAintConnectedPleaseConnect() {
+   public void ifAintConnectedPleaseConnect() {
        if (!em.isOpen()){
            em = JPAUtil.getEntityManager();
            System.out.println("PlayerDAO Reconstruido. " + em.toString());
